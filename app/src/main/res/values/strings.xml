@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Contatcts Fix</string>
+    <string name="action_settings">Settings</string>
+    <string name="intro_message">Testing 1, 2, 3.</string>
+</resources>
