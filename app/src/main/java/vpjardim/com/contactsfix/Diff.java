@@ -5,6 +5,7 @@
 package vpjardim.com.contactsfix;
 
 import android.graphics.Color;
+import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
 
 import java.util.ArrayList;
@@ -21,99 +22,61 @@ import difflib.Patch;
  */
 public class Diff {
 
-    public static final String ORIGINAL_START = "<span style=\"background-color:#880000\">";
-    public static final String ORIGINAL_END = "</span>";
-    public static final String REVISED_START = "<span style=\"background-color:#008800\">";
-    public static final String REVISED_END = "</span>";
+    public SpannableString original;
+    public SpannableString revised;
+    public int colorOriginal = Color.parseColor("#FFCDD2");
+    public int colorRevised = Color.parseColor("#C8E6C9");
 
-    Object greenSpan = new BackgroundColorSpan(Color.GREEN);
-    Object redSpan = new BackgroundColorSpan(Color.RED);
 
-    // public static final String ORIGINAL_START = "[";
-    // public static final String ORIGINAL_END = "]";
-    // public static final String REVISED_START = "[";
-    // public static final String REVISED_END = "]";
 
-    public static void main(String[] args) {
+    public void diffHighlight(String originalStr, String revisedStr) {
 
-        //                 01234567890123456
-        String original = "+1 314 488 6534";
-        String revised  = "+55 13 14488-6534";
+        System.out.println("diffHighlight =======>");
 
-        // //                 01234567890123456
-        // String original = "14 (63) 984568863";
-        // String revised  = "+55 63 98456-8863";
+        original = new SpannableString(originalStr);
+        revised  = new SpannableString(revisedStr);
 
-        ArrayList<String> originalList = new ArrayList<>(Arrays.asList(original.split("")));
-        ArrayList<String> revisedList = new ArrayList<>(Arrays.asList(revised.split("")));
+        ArrayList<String> originalList = new ArrayList<>(Arrays.asList(originalStr.split("")));
+        ArrayList<String> revisedList = new ArrayList<>(Arrays.asList(revisedStr.split("")));
 
         Patch<String> patch = DiffUtils.diff(originalList, revisedList);
 
-        System.out.println(highlight(original, patch, true));
-        System.out.println(highlight(revised, patch, false));
+        System.out.println("originalStr = " + originalStr);
+        System.out.println("revisedStr  = " + revisedStr);
+        highlight(patch);
+
+        System.out.println("diffHighlight end ====");
     }
 
-    public static void diff(Contact.Number number) {
-
-        if(number.status != Contact.NUMBER_FIXED) return;
-
-        String original = number.number;
-        String revised  = number.numberFix;
-
-        ArrayList<String> originalList = new ArrayList<>(Arrays.asList(original.split("")));
-        ArrayList<String> revisedList = new ArrayList<>(Arrays.asList(revised.split("")));
-
-        Patch<String> patch = DiffUtils.diff(originalList, revisedList);
-
-        number.numberHl = highlight(original, patch, true);
-        number.numberFixHl = highlight(revised, patch, false);
-    }
-
-    private static String highlight(String srt, Patch<String> patch, boolean isOriginal) {
-
-        StringBuilder result = new StringBuilder();
-        int prevEnd = 0;
-
-        String startCode;
-        String endCode;
-
-        if(isOriginal) {
-            startCode = ORIGINAL_START;
-            endCode = ORIGINAL_END;
-        }
-        else {
-            startCode = REVISED_START;
-            endCode = REVISED_END;
-        }
+    private void highlight(Patch<String> patch) {
 
         for(Delta<String> delta : patch.getDeltas()) {
 
-            Chunk<String> chunk;
-            if(isOriginal) chunk = delta.getOriginal();
-            else chunk = delta.getRevised();
+            Chunk<String> originalChunk = delta.getOriginal();
+            Chunk<String> revisedChunk = delta.getRevised();
 
-            int ini = chunk.getPosition() -1;
-            int end = ini + chunk.size() -1;
+            int ini;
+            int end;
 
-            if(chunk.size() > 0) {
-                // What is left behind
-                result.append(srt.substring(prevEnd, ini));
-                // Changed start delimiter
-                result.append(startCode);
-                // Content changed
-                //try {
-                    result.append(srt.substring(ini, end));
-                //}
-                //catch(Exception e) { }
-                // Change end delimiter
-                result.append(endCode);
+            System.out.println("originalChunk = " + originalChunk);
 
-                prevEnd = end;
+            ini = originalChunk.getPosition() -1;
+            end = ini + originalChunk.size();
+
+            if(originalChunk.size() > 0) {
+                BackgroundColorSpan span = new BackgroundColorSpan(colorOriginal);
+                original.setSpan(span, ini, end, 0);
+            }
+
+            System.out.println("revisedChunk = " + revisedChunk);
+
+            ini = revisedChunk.getPosition() -1;
+            end = ini + revisedChunk.size();
+
+            if(revisedChunk.size() > 0) {
+                BackgroundColorSpan span = new BackgroundColorSpan(colorRevised);
+                revised.setSpan(span, ini, end, 0);
             }
         }
-
-        result.append(srt.substring(prevEnd, srt.length()));
-
-        return result.toString();
     }
 }

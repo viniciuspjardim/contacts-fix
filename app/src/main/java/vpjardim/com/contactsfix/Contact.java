@@ -4,7 +4,8 @@
 
 package vpjardim.com.contactsfix;
 
-import android.text.SpannableString;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 
@@ -12,42 +13,7 @@ import java.util.ArrayList;
  * @author Vinícius Jardim
  *         14/02/2017
  */
-public class Contact {
-
-    public static final int NUMBER_START = 0;
-    public static final int NUMBER_OK = 1;
-    public static final int NUMBER_FIXED = 2;
-    public static final int NUMBER_ERROR = 3;
-
-    public static class Number {
-        String number;
-        String numberFix;
-        SpannableString numberHl;
-        SpannableString numberFixHl;
-        int status;
-
-        public Number(String number) {
-            this.number = number;
-            this.numberFix = null;
-            this.numberHl = new SpannableString(number);
-            this.numberFixHl = null;
-            this.status = NUMBER_START;
-        }
-
-        public Number(String number, String numberFix) {
-            this.number = number;
-            this.numberFix = numberFix;
-            this.numberHl = new SpannableString(number);
-            this.numberFixHl = new SpannableString(numberFix);
-
-            if(numberFix == null)
-                status = NUMBER_ERROR;
-            else if(number.equals(numberFix))
-                status = NUMBER_OK;
-            else
-                status = NUMBER_FIXED;
-        }
-    }
+public class Contact implements Parcelable {
 
     String name;
     ArrayList<Number> numbers;
@@ -59,12 +25,6 @@ public class Contact {
 
     public Contact() {
         numbers = new ArrayList<>();
-    }
-
-    public Number addNumber(String number) {
-        Number n = new Number(number);
-        numbers.add(n);
-        return n;
     }
 
     public Number addNumber(String number, String numberFix) {
@@ -88,4 +48,34 @@ public class Contact {
         }
         strB.append("\n");
     }
+
+    private Contact(Parcel in) {
+        name = in.readString();
+        in.readTypedList(numbers, Number.CREATOR);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeTypedList(numbers);
+    }
+
+    public static final Parcelable.Creator<Contact> CREATOR
+            = new Parcelable.Creator<Contact>() {
+
+        @Override
+        public Contact createFromParcel(Parcel in) {
+            return new Contact(in);
+        }
+
+        @Override
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
 }

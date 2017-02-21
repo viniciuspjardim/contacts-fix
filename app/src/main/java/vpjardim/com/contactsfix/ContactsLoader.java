@@ -22,7 +22,7 @@ import java.util.ArrayList;
  */
 public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String TAG = "ContactsLoader";
+    public static final String TAG = "CLoader";
 
     public interface Callback {
         void onLoadFinished();
@@ -47,9 +47,11 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                 CommonDataKinds.Contactables.DISPLAY_NAME + " != '') AND (" +
                 CommonDataKinds.Contactables.HAS_PHONE_NUMBER + " = 1))";
 
-        Log.i(TAG, selection);
+        String sortBy = "(UPPER(" + CommonDataKinds.Contactables.DISPLAY_NAME + ") || " +
+                CommonDataKinds.Contactables.LOOKUP_KEY + ")";
 
-        String sortBy = CommonDataKinds.Contactables.LOOKUP_KEY;
+        Log.i(TAG, "selection: <" + selection + ">");
+        Log.i(TAG, "sortBy: <" + sortBy + ">");
 
         return new CursorLoader(context, ContactsContract.Data.CONTENT_URI, null, selection, null,
                 sortBy);
@@ -80,7 +82,8 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                 contacts.add(contact);
                 lookupKey = newLookupKey;
 
-                Log.i(TAG, name + "\n");
+                Log.i(TAG, "********** " + name + " **********");
+                Log.i(TAG, "lookupKey = " + lookupKey);
             }
 
             String mimeType = cursor.getString(typeIndex);
@@ -88,12 +91,10 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
             if(mimeType.equals(CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) {
 
                 String phone = cursor.getString(phoneIndex);
+                Log.i(TAG, "phone = " + phone + " ============");
+
                 String phoneFix = Formatter.format(phone, np);
-
-                Contact.Number n = contact.addNumber(phone, phoneFix);
-                Diff.diff(n);
-
-                Log.i(TAG, "  " + phone + "\n");
+                contact.addNumber(phone, phoneFix);
             }
         } while(cursor.moveToNext());
 

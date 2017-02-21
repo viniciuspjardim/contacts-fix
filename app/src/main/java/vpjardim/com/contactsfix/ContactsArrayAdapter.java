@@ -5,7 +5,6 @@
 package vpjardim.com.contactsfix;
 
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,9 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        Diff diff = new Diff();
+
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -42,22 +44,26 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
         nameTextView.setText(contact.name);
 
-        for(Contact.Number number : contact.numbers) {
+        for(Number number : contact.numbers) {
 
             View numberRow = inflater.inflate(R.layout.phone_item, parent, false);
             TextView phoneTextView = (TextView) numberRow.findViewById(R.id.phone);
             TextView phoneFixTextView = (TextView) numberRow.findViewById(R.id.phoneFix);
 
-            phoneTextView.setText(Html.fromHtml(number.numberHl));
+            if(number.status == Number.FORMATTED) {
 
-            if(number.status == Contact.NUMBER_OK) {
-                phoneFixTextView.setText("<No change>");
+                diff.diffHighlight(number.number, number.numberFix);
+
+                phoneTextView.setText(diff.original);
+                phoneFixTextView.setText(diff.revised);
             }
-            else if(number.status == Contact.NUMBER_FIXED) {
-                phoneFixTextView.setText(Html.fromHtml(number.numberFixHl));
+            else if(number.status == Number.NO_DIFF) {
+                phoneTextView.setText(number.number);
+                phoneFixTextView.setText(R.string.format_no_dif);
             }
-            else if(number.status == Contact.NUMBER_ERROR) {
-                phoneFixTextView.setText("<Error>");
+            else if(number.status == Number.FORMAT_ERR) {
+                phoneTextView.setText(number.number);
+                phoneFixTextView.setText(R.string.format_err);
             }
 
             LinearLayout linearLayout = (LinearLayout)rowView.findViewById(R.id.listPhoneItems);

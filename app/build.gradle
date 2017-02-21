@@ -26,6 +26,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
-    // compile files('libs/java-diff-utils-2.1.1.jar')
+    // compile files('libs/java-diffHighlight-utils-2.1.1.jar')
     testCompile 'junit:junit:4.12'
 }

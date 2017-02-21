@@ -13,8 +13,6 @@ import java.util.regex.Pattern;
  */
 public class Formatter {
 
-    public static final String TAG = "Formatter";
-
     public static class NumberParts {
 
         /** Error message */
@@ -73,6 +71,9 @@ public class Formatter {
     /** Matches anything except digits 0-9 */
     public static final Pattern p = Pattern.compile("[^\\d]");
 
+    /** Matches anything except digits 0-9 and add sign "+" */
+    public static final Pattern p2 = Pattern.compile("[^\\+\\d]");
+
     /** Default country code */
     public static String DCC = "55";
 
@@ -87,13 +88,14 @@ public class Formatter {
         format("14 (63) 984568863", null);
         format("+55 63 99930-6102", null);
         format("+238 743 17 19", null);
+        format("+1 314 488 6534", null);
     }
 
-    public static boolean logErro(NumberParts np) {
+    public static boolean logError(NumberParts np) {
 
         if(np.error != null) {
-            System.out.println(TAG + ": Error = " + np.error);
-            System.out.println();
+            System.out.println("Error = " + np.error);
+            System.out.println("===");
             return true;
         }
         return false;
@@ -101,33 +103,37 @@ public class Formatter {
 
     public static String format(String number, NumberParts np) {
 
-        System.out.println(TAG + ": Format -> ");
-        System.out.println(TAG + ": " + number);
+        System.out.println("Format Call -> ");
+        System.out.println("number = " + number);
 
         if(np == null) np = new NumberParts();
-        np.init();
 
+        np.init();
         np.original = number;
 
         preFormat(np);
-        if(logErro(np)) return null;
+        if(logError(np)) return null;
         getCountryCode(np);
-        if(logErro(np)) return null;
+        if(logError(np)) return null;
 
         if(np.countryCode == null || np.countryCode.equals("55")) {
             brazil(np);
-            if(logErro(np)) return null;
+            if(logError(np)) return null;
             assemble(np);
         }
 
-        System.out.println();
+        System.out.println("===");
 
         return np.formatted;
     }
 
     public static void preFormat(NumberParts np) {
 
+        // There is a non printable char code 8234(decimal) before the + in some contacts. Trim is
+        // not removing it. Using a pattern to remove it.
         np.preFormatted = np.original.trim();
+        Matcher m2 = p2.matcher(np.preFormatted);
+        np.preFormatted = m2.replaceAll("");
 
         // Avoid empty string
         if(np.preFormatted.length() < 1) {
@@ -136,14 +142,15 @@ public class Formatter {
         }
 
         np.addSign = np.preFormatted.charAt(0) == '+';
+        System.out.println(np.preFormatted.charAt(0) + " :: " + np.addSign);
 
-        Matcher m = p.matcher(np.original);
+        Matcher m1 = p.matcher(np.original);
 
         // Replace all non digits characters with empty string
-        np.preFormatted = m.replaceAll("");
+        np.preFormatted = m1.replaceAll("");
         np.cache.append(np.preFormatted);
 
-        System.out.println(TAG + ": " + np.preFormatted);
+        System.out.println("preFormatted = " + np.preFormatted);
 
         if(np.preFormatted.length() < MIN) np.error = "size < MIN";
     }
@@ -176,8 +183,8 @@ public class Formatter {
             np.countryCode = codeRow.countryCode;
             np.cache.delete(0, np.countryCode.length());
 
-            System.out.println(TAG + ": " + codeRow.toString());
-            System.out.println(TAG + ": Cache = " + np.cache);
+            System.out.println(codeRow.toString());
+            System.out.println("cache = " + np.cache);
         }
 
         return codeRow;
@@ -220,6 +227,6 @@ public class Formatter {
 
         np.formatted = np.cache.toString();
 
-        System.out.println(TAG + ": Formatted = " + np.formatted);
+        System.out.println("formatted = " + np.formatted);
     }
 }

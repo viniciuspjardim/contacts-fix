@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -14,16 +15,24 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements Permissions.Callback,
         ContactsLoader.Callback {
 
-    Permissions permissions;
-    ViewFlipper vf;
+    public static final String TAG = "MActivity";
+    public static final String CONTACTS_KEY = "CONTACTS";
+
     Toolbar toolbar;
+    ViewFlipper vf;
+    FloatingActionButton startButton;
     ListView listView;
+
+    Permissions permissions;
     ArrayList<Contact> contacts;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle saved) {
+
+        super.onCreate(saved);
+        Log.i(TAG, "onCreate ========>");
+
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -31,9 +40,12 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         permissions = new Permissions();
 
         vf = (ViewFlipper) findViewById(R.id.viewFlipper);
-        FloatingActionButton startButton = (FloatingActionButton) findViewById(R.id.start);
+        startButton = (FloatingActionButton) findViewById(R.id.start);
 
-        contacts = new ArrayList<>();
+        if(saved != null)
+            contacts = saved.getParcelableArrayList(CONTACTS_KEY);
+        if(contacts == null)
+            contacts = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(new ContactsArrayAdapter(this, contacts));
@@ -41,21 +53,23 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                startButton.setActivated(false);
+
                 if(permissions.checkPermission(
                         MainActivity.this, Permissions.READ_CONTACTS, MainActivity.this)) {
                     processContacts();
                 }
+                startButton.setActivated(true);
             }
         });
+
+        if(contacts.size() > 0) vf.showNext();//startButton.callOnClick();
     }
 
     public void processContacts() {
-
-        Toast.makeText(this, "Processing...", Toast.LENGTH_SHORT).show();
-
+        Toast.makeText(this, R.string.tt_loading, Toast.LENGTH_SHORT).show();
         ContactsLoader contactsLoader = new ContactsLoader(this, this, contacts);
-        Bundle bundle = new Bundle();
-        getLoaderManager().restartLoader(0, bundle, contactsLoader);
+        getLoaderManager().restartLoader(0, null, contactsLoader);
     }
 
     @Override
@@ -63,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
     @Override
     public void onPermissionDenied() {
-        Toast.makeText(this, "Permission denied!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.tt_no_permission, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -76,5 +90,14 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
     public void onLoadFinished() {
         ((ContactsArrayAdapter)listView.getAdapter()).notifyDataSetChanged();
         vf.showNext();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle saved) {
+
+        super.onSaveInstanceState(saved);
+        Log.i(TAG, "onSaveInstanceState ========>");
+        if(contacts != null && !contacts.isEmpty())
+            saved.putParcelableArrayList(CONTACTS_KEY, contacts);
     }
 }
