@@ -60,42 +60,43 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
 
-        if (cursor.getCount() == 0) return;
+        if(cursor.getCount() == 0) return;
 
         int phoneIndex = cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER);
         int nameIndex = cursor.getColumnIndex(CommonDataKinds.Contactables.DISPLAY_NAME);
         int lookupIndex = cursor.getColumnIndex(CommonDataKinds.Contactables.LOOKUP_KEY);
-        int typeIndex = cursor.getColumnIndex(CommonDataKinds.Contactables.MIMETYPE);
+        int mimeIndex = cursor.getColumnIndex(CommonDataKinds.Contactables.MIMETYPE);
 
         cursor.moveToFirst();
 
-        String lookupKey = "";
+        String prevLookupKey = "";
         Contact contact = null;
         Formatter.NumberParts np = new Formatter.NumberParts();
 
         do {
-            String newLookupKey = cursor.getString(lookupIndex);
 
-            if(!lookupKey.equals(newLookupKey)) {
+            String mimeType = cursor.getString(mimeIndex);
+            if(!mimeType.equals(CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) continue;
+
+            String lookupKey = cursor.getString(lookupIndex);
+
+            if(!prevLookupKey.equals(lookupKey)) {
+
                 String name = cursor.getString(nameIndex);
-                contact = new Contact(name);
+                contact = new Contact(name, lookupKey);
                 contacts.add(contact);
-                lookupKey = newLookupKey;
+                prevLookupKey = lookupKey;
 
                 Log.i(TAG, "********** " + name + " **********");
-                Log.i(TAG, "lookupKey = " + lookupKey);
+                Log.i(TAG, "lookupKey = " + prevLookupKey);
             }
 
-            String mimeType = cursor.getString(typeIndex);
+            String phone = cursor.getString(phoneIndex);
+            Log.i(TAG, "phone = " + phone + " ============");
 
-            if(mimeType.equals(CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) {
+            String phoneFix = Formatter.format(phone, np);
+            contact.addNumber(phone, phoneFix);
 
-                String phone = cursor.getString(phoneIndex);
-                Log.i(TAG, "phone = " + phone + " ============");
-
-                String phoneFix = Formatter.format(phone, np);
-                contact.addNumber(phone, phoneFix);
-            }
         } while(cursor.moveToNext());
 
         if(callback != null) callback.onLoadFinished();

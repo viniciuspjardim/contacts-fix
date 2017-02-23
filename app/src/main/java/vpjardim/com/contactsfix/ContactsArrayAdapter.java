@@ -5,68 +5,101 @@
 package vpjardim.com.contactsfix;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 /**
  * @author Vinícius Jardim
- *         14/02/2017
+ * 14/02/2017
  */
 public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
     private final Context context;
     private final ArrayList<Contact> contacts;
 
+    private Diff diff;
+    LayoutInflater inflater;
+
     public ContactsArrayAdapter(Context context, ArrayList<Contact> contacts) {
+
         super(context, R.layout.activity_main, contacts);
+
         this.context = context;
         this.contacts = contacts;
+
+        diff = new Diff();
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View rowView, ViewGroup parent) {
 
-        Diff diff = new Diff();
+        if(rowView == null) {
+            rowView = inflater.inflate(R.layout.list_item, parent, false);
+        }
 
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        View rowView = inflater.inflate(R.layout.list_item, parent, false);
-        TextView nameTextView = (TextView) rowView.findViewById(R.id.name);
-
+        TextView contactNameTV = (TextView) rowView.findViewById(R.id.tvContactName);
         Contact contact = contacts.get(position);
 
-        nameTextView.setText(contact.name);
+        contactNameTV.setText(contact.name);
 
-        for(Number number : contact.numbers) {
+        LinearLayout linearLayout = (LinearLayout)rowView.findViewById(R.id.phoneItems);
+
+        // Todo see if it's better to pool the views rather than remove all
+        linearLayout.removeAllViews();
+
+        for(Phone phone : contact.phones) {
 
             View numberRow = inflater.inflate(R.layout.phone_item, parent, false);
-            TextView phoneTextView = (TextView) numberRow.findViewById(R.id.phone);
-            TextView phoneFixTextView = (TextView) numberRow.findViewById(R.id.phoneFix);
+            TextView originalTV = (TextView) numberRow.findViewById(R.id.tvOriginal);
+            TextView formattedTV = (TextView) numberRow.findViewById(R.id.tvFormatted);
+            CheckBox checkBox = (CheckBox) numberRow.findViewById(R.id.checkBox);
 
-            if(number.status == Number.FORMATTED) {
+            numberRow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(context, "nrow", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                diff.diffHighlight(number.number, number.numberFix);
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(context, "checkBox", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                phoneTextView.setText(diff.original);
-                phoneFixTextView.setText(diff.revised);
+            if(phone.status == Phone.FORMATTED) {
+
+                diff.diffHighlight(phone.original, phone.formatted);
+                originalTV.setText(diff.original);
+                formattedTV.setText(diff.formatted);
+                checkBox.setChecked(phone.toSave);
             }
-            else if(number.status == Number.NO_DIFF) {
-                phoneTextView.setText(number.number);
-                phoneFixTextView.setText(R.string.format_no_dif);
+            else if(phone.status == Phone.NO_DIFF) {
+                originalTV.setText(phone.original);
+                formattedTV.setText(R.string.format_no_dif);
+                formattedTV.setTextColor(Color.parseColor("#388E3C")); // Green 700
+                checkBox.setEnabled(false);
+                checkBox.setChecked(false);
             }
-            else if(number.status == Number.FORMAT_ERR) {
-                phoneTextView.setText(number.number);
-                phoneFixTextView.setText(R.string.format_err);
+            else if(phone.status == Phone.FORMAT_ERR) {
+                originalTV.setText(phone.original);
+                formattedTV.setText(R.string.format_err);
+                formattedTV.setTextColor(Color.parseColor("#D32F2F")); // Red 700
+                checkBox.setEnabled(false);
+                checkBox.setChecked(false);
             }
 
-            LinearLayout linearLayout = (LinearLayout)rowView.findViewById(R.id.listPhoneItems);
             linearLayout.addView(numberRow);
         }
 

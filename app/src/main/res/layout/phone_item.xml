@@ -9,10 +9,11 @@
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/phone"/>
+        android:layout_below="@+id/tvOriginal"
+        android:checked="true"/>
 
     <TextView
-        android:id="@+id/phone"
+        android:id="@+id/tvOriginal"
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +23,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
     <TextView
-        android:id="@+id/phoneFix"
+        android:id="@+id/tvFormatted"
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,17 +39,17 @@
         android:layout_width="2dp"
         android:layout_height="22dp"
         android:layout_toRightOf="@id/checkBox"
-        android:layout_alignTop="@id/phone"
+        android:layout_alignTop="@id/tvOriginal"
         android:layout_marginTop="8dp"
-        android:background="@color/accentA100"/>
+        android:background="@color/accentA200"/>
 
     <View
         android:id="@+id/separator2"
         android:layout_width="2dp"
         android:layout_height="22dp"
         android:layout_toRightOf="@id/checkBox"
-        android:layout_alignBottom="@id/phoneFix"
+        android:layout_alignBottom="@id/tvFormatted"
         android:layout_marginBottom="2dp"
-        android:background="@color/accentA100"/>
+        android:background="@color/accentA200"/>
 
 </RelativeLayout>

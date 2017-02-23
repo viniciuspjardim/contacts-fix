@@ -40,14 +40,14 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         permissions = new Permissions();
 
         vf = (ViewFlipper) findViewById(R.id.viewFlipper);
-        startButton = (FloatingActionButton) findViewById(R.id.start);
+        startButton = (FloatingActionButton) findViewById(R.id.btStart);
 
         if(saved != null)
             contacts = saved.getParcelableArrayList(CONTACTS_KEY);
         if(contacts == null)
             contacts = new ArrayList<>();
 
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.lvContacts);
         listView.setAdapter(new ContactsArrayAdapter(this, contacts));
 
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
     @Override
     public void onLoadFinished() {
         ((ContactsArrayAdapter)listView.getAdapter()).notifyDataSetChanged();
+        Log.i(TAG, "Number of contacts = " + contacts.size());
         vf.showNext();
     }
 

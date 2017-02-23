@@ -23,26 +23,26 @@ import difflib.Patch;
 public class Diff {
 
     public SpannableString original;
-    public SpannableString revised;
+    public SpannableString formatted;
     public int colorOriginal = Color.parseColor("#FFCDD2");
-    public int colorRevised = Color.parseColor("#C8E6C9");
+    public int colorFormatted = Color.parseColor("#C8E6C9");
 
 
 
-    public void diffHighlight(String originalStr, String revisedStr) {
+    public void diffHighlight(String originalStr, String formattedStr) {
 
         System.out.println("diffHighlight =======>");
 
         original = new SpannableString(originalStr);
-        revised  = new SpannableString(revisedStr);
+        formatted = new SpannableString(formattedStr);
 
         ArrayList<String> originalList = new ArrayList<>(Arrays.asList(originalStr.split("")));
-        ArrayList<String> revisedList = new ArrayList<>(Arrays.asList(revisedStr.split("")));
+        ArrayList<String> formattedList = new ArrayList<>(Arrays.asList(formattedStr.split("")));
 
-        Patch<String> patch = DiffUtils.diff(originalList, revisedList);
+        Patch<String> patch = DiffUtils.diff(originalList, formattedList);
 
         System.out.println("originalStr = " + originalStr);
-        System.out.println("revisedStr  = " + revisedStr);
+        System.out.println("formattedStr  = " + formattedStr);
         highlight(patch);
 
         System.out.println("diffHighlight end ====");
@@ -53,7 +53,7 @@ public class Diff {
         for(Delta<String> delta : patch.getDeltas()) {
 
             Chunk<String> originalChunk = delta.getOriginal();
-            Chunk<String> revisedChunk = delta.getRevised();
+            Chunk<String> formattedChunk = delta.getRevised();
 
             int ini;
             int end;
@@ -68,14 +68,14 @@ public class Diff {
                 original.setSpan(span, ini, end, 0);
             }
 
-            System.out.println("revisedChunk = " + revisedChunk);
+            System.out.println("formattedChunk = " + formattedChunk);
 
-            ini = revisedChunk.getPosition() -1;
-            end = ini + revisedChunk.size();
+            ini = formattedChunk.getPosition() -1;
+            end = ini + formattedChunk.size();
 
-            if(revisedChunk.size() > 0) {
-                BackgroundColorSpan span = new BackgroundColorSpan(colorRevised);
-                revised.setSpan(span, ini, end, 0);
+            if(formattedChunk.size() > 0) {
+                BackgroundColorSpan span = new BackgroundColorSpan(colorFormatted);
+                formatted.setSpan(span, ini, end, 0);
             }
         }
     }

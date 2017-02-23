@@ -11,47 +11,46 @@ import java.util.ArrayList;
 
 /**
  * @author Vinícius Jardim
- *         14/02/2017
+ * 14/02/2017
  */
 public class Contact implements Parcelable {
 
-    String name;
-    ArrayList<Number> numbers;
+    public String name;
+    public String lookup;
+    public ArrayList<Phone> phones;
 
-    public Contact(String name) {
-        this();
+    public Contact(String name, String lookup) {
         this.name = name;
+        this.lookup = lookup;
+        this.phones = new ArrayList<>();
     }
 
-    public Contact() {
-        numbers = new ArrayList<>();
-    }
-
-    public Number addNumber(String number, String numberFix) {
-        Number n = new Number(number, numberFix);
-        numbers.add(n);
-        return n;
+    public void addNumber(String original, String formatted) {
+        phones.add(new Phone(original, formatted));
     }
 
     @Override
     public String toString() {
         StringBuilder strB = new StringBuilder();
         appendThis(strB);
-        return new String(strB);
+        return strB.toString();
     }
 
     public void appendThis(StringBuilder strB) {
         strB.append(name).append("\n");
 
-        for(Number number : numbers) {
-            strB.append(number.number).append(" > ").append(number.numberFix);
+        for(Phone phone : phones) {
+            strB.append(phone.original).append(" > ").append(phone.formatted);
         }
         strB.append("\n");
     }
 
+    // ======== Parcelable stuff ========>
+
     private Contact(Parcel in) {
         name = in.readString();
-        in.readTypedList(numbers, Number.CREATOR);
+        lookup = in.readString();
+        in.readTypedList(phones, Phone.CREATOR);
     }
 
     @Override
@@ -62,7 +61,8 @@ public class Contact implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeTypedList(numbers);
+        dest.writeString(lookup);
+        dest.writeTypedList(phones);
     }
 
     public static final Parcelable.Creator<Contact> CREATOR
