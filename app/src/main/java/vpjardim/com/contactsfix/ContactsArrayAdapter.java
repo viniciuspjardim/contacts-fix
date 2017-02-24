@@ -43,6 +43,8 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        // Performance Profiling - profile1
+
         View rowView = inflater.inflate(R.layout.list_item, parent, false);
 
         TextView contactNameTV = (TextView) rowView.findViewById(R.id.tvContactName);
