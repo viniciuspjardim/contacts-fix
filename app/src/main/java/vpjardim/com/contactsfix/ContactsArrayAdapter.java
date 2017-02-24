@@ -41,11 +41,9 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     }
 
     @Override
-    public View getView(int position, View rowView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(rowView == null) {
-            rowView = inflater.inflate(R.layout.list_item, parent, false);
-        }
+        View rowView = inflater.inflate(R.layout.list_item, parent, false);
 
         TextView contactNameTV = (TextView) rowView.findViewById(R.id.tvContactName);
         Contact contact = contacts.get(position);
@@ -53,9 +51,6 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         contactNameTV.setText(contact.name);
 
         LinearLayout linearLayout = (LinearLayout)rowView.findViewById(R.id.phoneItems);
-
-        // Todo see if it's better to pool the views rather than remove all
-        linearLayout.removeAllViews();
 
         for(Phone phone : contact.phones) {
 
