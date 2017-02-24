@@ -53,8 +53,8 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        // Performance Profiling - profile3
-        // Reusing convertView, using ViewHolder
+        // Performance Profiling - profile4
+        // Reusing convertView, using ViewHolder, Reusing some children of linearLayout
 
         View view;
         ContactViewHolder holder;
@@ -72,11 +72,21 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         Contact contact = contacts.get(position);
 
         holder.contactNameTV.setText(contact.name);
-        holder.linearLayout.removeAllViews();
+
+        int i = 0;
+        int cCount = holder.linearLayout.getChildCount();
 
         for(Phone phone : contact.phones) {
 
-            View numberRow = inflater.inflate(R.layout.phone_item, parent, false);
+            View numberRow;
+
+            if(i < cCount)
+                numberRow = holder.linearLayout.getChildAt(i);
+            else {
+                numberRow = inflater.inflate(R.layout.phone_item, parent, false);
+                holder.linearLayout.addView(numberRow);
+            }
+
             TextView originalTV = (TextView) numberRow.findViewById(R.id.tvOriginal);
             TextView formattedTV = (TextView) numberRow.findViewById(R.id.tvFormatted);
             CheckBox checkBox = (CheckBox) numberRow.findViewById(R.id.checkBox);
@@ -100,6 +110,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 diff.diffHighlight(phone.original, phone.formatted);
                 originalTV.setText(diff.original);
                 formattedTV.setText(diff.formatted);
+                checkBox.setEnabled(true);
                 checkBox.setChecked(phone.toSave);
             }
             else if(phone.status == Phone.NO_DIFF) {
@@ -117,8 +128,11 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 checkBox.setChecked(false);
             }
 
-            holder.linearLayout.addView(numberRow);
+            i++;
         }
+
+        if(i < cCount)
+            holder.linearLayout.removeViews(i, cCount - i);
 
         return view;
     }
