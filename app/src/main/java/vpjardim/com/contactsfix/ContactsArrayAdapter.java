@@ -23,11 +23,21 @@ import java.util.ArrayList;
  */
 public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
+    public static class ContactViewHolder {
+        TextView contactNameTV;
+        LinearLayout linearLayout;
+
+        public ContactViewHolder(View view) {
+            contactNameTV = (TextView) view.findViewById(R.id.tvContactName);
+            linearLayout = (LinearLayout)view.findViewById(R.id.phoneItems);
+        }
+    }
+
     private final Context context;
     private final ArrayList<Contact> contacts;
 
     private Diff diff;
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
 
     public ContactsArrayAdapter(Context context, ArrayList<Contact> contacts) {
 
@@ -43,23 +53,26 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        // Performance Profiling - profile2
+        // Performance Profiling - profile3
+        // Reusing convertView, using ViewHolder
 
-        View rowView;
+        View view;
+        ContactViewHolder holder;
 
-        if(convertView == null)
-            rowView = inflater.inflate(R.layout.list_item, parent, false);
-        else
-            rowView = convertView;
+        if(convertView == null) {
+            view = inflater.inflate(R.layout.list_item, parent, false);
+            holder = new ContactViewHolder(view);
+            view.setTag(holder);
+        }
+        else {
+            view = convertView;
+            holder = (ContactViewHolder) view.getTag();
+        }
 
-        TextView contactNameTV = (TextView) rowView.findViewById(R.id.tvContactName);
         Contact contact = contacts.get(position);
 
-        contactNameTV.setText(contact.name);
-
-        LinearLayout linearLayout = (LinearLayout)rowView.findViewById(R.id.phoneItems);
-        // Todo see if is better to pool views rather than remove all
-        linearLayout.removeAllViews();
+        holder.contactNameTV.setText(contact.name);
+        holder.linearLayout.removeAllViews();
 
         for(Phone phone : contact.phones) {
 
@@ -104,9 +117,9 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 checkBox.setChecked(false);
             }
 
-            linearLayout.addView(numberRow);
+            holder.linearLayout.addView(numberRow);
         }
 
-        return rowView;
+        return view;
     }
 }
