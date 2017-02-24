@@ -43,9 +43,14 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        // Performance Profiling - profile1
+        // Performance Profiling - profile2
 
-        View rowView = inflater.inflate(R.layout.list_item, parent, false);
+        View rowView;
+
+        if(convertView == null)
+            rowView = inflater.inflate(R.layout.list_item, parent, false);
+        else
+            rowView = convertView;
 
         TextView contactNameTV = (TextView) rowView.findViewById(R.id.tvContactName);
         Contact contact = contacts.get(position);
@@ -53,6 +58,8 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         contactNameTV.setText(contact.name);
 
         LinearLayout linearLayout = (LinearLayout)rowView.findViewById(R.id.phoneItems);
+        // Todo see if is better to pool views rather than remove all
+        linearLayout.removeAllViews();
 
         for(Phone phone : contact.phones) {
 
