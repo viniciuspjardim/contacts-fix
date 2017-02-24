@@ -6,6 +6,7 @@ package vpjardim.com.contactsfix;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.util.Pools;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,8 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         }
     }
 
+    private final Pools.SynchronizedPool phoneViewPool = new Pools.SynchronizedPool(16);
+
     private final Context context;
     private final ArrayList<Contact> contacts;
 
@@ -53,8 +56,8 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        // Performance Profiling - profile4
-        // Reusing convertView, using ViewHolder, Reusing some children of linearLayout
+        // Performance Profiling - profile5
+        // Reusing convertView, using ViewHolder, Reusing all children of linearLayout
 
         View view;
         ContactViewHolder holder;
@@ -83,7 +86,8 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
             if(i < cCount)
                 numberRow = holder.linearLayout.getChildAt(i);
             else {
-                numberRow = inflater.inflate(R.layout.phone_item, parent, false);
+                // Getting a pooled object
+                numberRow = obtainPhoneView(parent);
                 holder.linearLayout.addView(numberRow);
             }
 
@@ -110,6 +114,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 diff.diffHighlight(phone.original, phone.formatted);
                 originalTV.setText(diff.original);
                 formattedTV.setText(diff.formatted);
+                // Todo set font color back to black (might be green or red)
                 checkBox.setEnabled(true);
                 checkBox.setChecked(phone.toSave);
             }
@@ -131,9 +136,30 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
             i++;
         }
 
+        // Add in the pool unused views
+        for(int j = i; j < cCount; j++) {
+            recyclePhoneView(holder.linearLayout.getChildAt(j));
+        }
+
+        // Removing from the LinearLayout the ones that were pooled
         if(i < cCount)
             holder.linearLayout.removeViews(i, cCount - i);
 
         return view;
+    }
+
+    private View obtainPhoneView(ViewGroup parent) {
+        View instance = (View) phoneViewPool.acquire();
+
+        // It will only create a new view if the pool is empty
+        if(instance != null)
+            // Todo should update parent?
+            return instance;
+        else
+            return inflater.inflate(R.layout.phone_item, parent, false);
+    }
+
+    private void recyclePhoneView(View view) {
+        phoneViewPool.release(view);
     }
 }
