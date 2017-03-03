@@ -15,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 
 /**
@@ -31,6 +30,19 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         public ContactViewHolder(View view) {
             contactNameTV = (TextView) view.findViewById(R.id.tvContactName);
             linearLayout = (LinearLayout)view.findViewById(R.id.phoneItems);
+        }
+    }
+
+    public static class PhoneViewHolder {
+
+        TextView originalTV;
+        TextView formattedTV;
+        CheckBox checkBox;
+
+        public PhoneViewHolder(View view) {
+            originalTV = (TextView) view.findViewById(R.id.tvOriginal);
+            formattedTV = (TextView) view.findViewById(R.id.tvFormatted);
+            checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         }
     }
 
@@ -56,8 +68,9 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        // Performance Profiling - profile5
-        // Reusing convertView, using ViewHolder, Reusing all children of linearLayout
+        // Performance Profiling - profile6
+        // Reusing convertView, using ViewHolder to phone_item, Reusing all children of
+        // linearLayout, using ViewHolder to phone_item
 
         View view;
         ContactViewHolder holder;
@@ -91,9 +104,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 holder.linearLayout.addView(numberRow);
             }
 
-            TextView originalTV = (TextView) numberRow.findViewById(R.id.tvOriginal);
-            TextView formattedTV = (TextView) numberRow.findViewById(R.id.tvFormatted);
-            CheckBox checkBox = (CheckBox) numberRow.findViewById(R.id.checkBox);
+            PhoneViewHolder pHolder = (PhoneViewHolder)numberRow.getTag();
 
             numberRow.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -102,7 +113,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 }
             });
 
-            checkBox.setOnClickListener(new View.OnClickListener() {
+            pHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(context, "checkBox", Toast.LENGTH_SHORT).show();
@@ -112,25 +123,25 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
             if(phone.status == Phone.FORMATTED) {
 
                 diff.diffHighlight(phone.original, phone.formatted);
-                originalTV.setText(diff.original);
-                formattedTV.setText(diff.formatted);
+                pHolder.originalTV.setText(diff.original);
+                pHolder.formattedTV.setText(diff.formatted);
                 // Todo set font color back to black (might be green or red)
-                checkBox.setEnabled(true);
-                checkBox.setChecked(phone.toSave);
+                pHolder.checkBox.setEnabled(true);
+                pHolder.checkBox.setChecked(phone.toSave);
             }
             else if(phone.status == Phone.NO_DIFF) {
-                originalTV.setText(phone.original);
-                formattedTV.setText(R.string.format_no_dif);
-                formattedTV.setTextColor(Color.parseColor("#388E3C")); // Green 700
-                checkBox.setEnabled(false);
-                checkBox.setChecked(false);
+                pHolder.originalTV.setText(phone.original);
+                pHolder.formattedTV.setText(R.string.format_no_dif);
+                pHolder.formattedTV.setTextColor(Color.parseColor("#388E3C")); // Green 700
+                pHolder.checkBox.setEnabled(false);
+                pHolder.checkBox.setChecked(false);
             }
             else if(phone.status == Phone.FORMAT_ERR) {
-                originalTV.setText(phone.original);
-                formattedTV.setText(R.string.format_err);
-                formattedTV.setTextColor(Color.parseColor("#D32F2F")); // Red 700
-                checkBox.setEnabled(false);
-                checkBox.setChecked(false);
+                pHolder.originalTV.setText(phone.original);
+                pHolder.formattedTV.setText(R.string.format_err);
+                pHolder.formattedTV.setTextColor(Color.parseColor("#D32F2F")); // Red 700
+                pHolder.checkBox.setEnabled(false);
+                pHolder.checkBox.setChecked(false);
             }
 
             i++;
@@ -155,8 +166,11 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         if(instance != null)
             // Todo should update parent?
             return instance;
-        else
-            return inflater.inflate(R.layout.phone_item, parent, false);
+        else {
+            View view = inflater.inflate(R.layout.phone_item, parent, false);
+            view.setTag(new PhoneViewHolder(view));
+            return view;
+        }
     }
 
     private void recyclePhoneView(View view) {
