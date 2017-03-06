@@ -48,7 +48,9 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
             contacts = new ArrayList<>();
 
         listView = (ListView) findViewById(R.id.lvContacts);
-        listView.setAdapter(new ContactsArrayAdapter(this, contacts));
+        ContactsArrayAdapter adapter = new ContactsArrayAdapter(this, contacts);
+        adapter.processSpanStrings();
+        listView.setAdapter(adapter);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +90,9 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
     @Override
     public void onLoadFinished() {
-        ((ContactsArrayAdapter)listView.getAdapter()).notifyDataSetChanged();
+        ContactsArrayAdapter adapter = (ContactsArrayAdapter)listView.getAdapter();
+        adapter.processSpanStrings();
+        adapter.notifyDataSetChanged();
         Log.i(TAG, "Number of contacts = " + contacts.size());
         vf.showNext();
     }

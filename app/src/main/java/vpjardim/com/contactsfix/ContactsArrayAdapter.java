@@ -7,6 +7,7 @@ package vpjardim.com.contactsfix;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.util.Pools;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author Vinícius Jardim
@@ -23,7 +26,14 @@ import java.util.ArrayList;
  */
 public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
+    public static class SpanStringHolder {
+
+        public SpannableString original;
+        public SpannableString formatted;
+    }
+
     public static class ContactViewHolder {
+
         TextView contactNameTV;
         LinearLayout linearLayout;
 
@@ -50,9 +60,9 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
     private final Context context;
     private final ArrayList<Contact> contacts;
-
-    private Diff diff;
-    private LayoutInflater inflater;
+    private final HashMap<Integer, SpanStringHolder> spanStrings;
+    private final Diff diff;
+    private final LayoutInflater inflater;
 
     public ContactsArrayAdapter(Context context, ArrayList<Contact> contacts) {
 
@@ -61,16 +71,34 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         this.context = context;
         this.contacts = contacts;
 
+        spanStrings = new HashMap<>();
         diff = new Diff();
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public void processSpanStrings() {
+
+        spanStrings.clear();
+
+        for(Contact c : contacts) {
+            for(Phone p : c.phones) {
+                if(p.status != Phone.FORMATTED) continue;
+
+                diff.diffHighlight(p.original, p.formatted);
+                SpanStringHolder spans = new SpanStringHolder();
+                spans.formatted = diff.formatted;
+                spans.original = diff.original;
+                spanStrings.put(p.id, spans);
+            }
+        }
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        // Performance Profiling - profile6
+        // Performance Profiling - profile7
         // Reusing convertView, using ViewHolder to phone_item, Reusing all children of
-        // linearLayout, using ViewHolder to phone_item
+        // linearLayout, using ViewHolder to phone_item, caching diffs
 
         View view;
         ContactViewHolder holder;
@@ -120,12 +148,14 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 }
             });
 
-            if(phone.status == Phone.FORMATTED) {
+            pHolder.originalTV.setTextColor(Color.parseColor("#8A000000"));
+            pHolder.formattedTV.setTextColor(Color.parseColor("#8A000000"));
 
-                diff.diffHighlight(phone.original, phone.formatted);
-                pHolder.originalTV.setText(diff.original);
-                pHolder.formattedTV.setText(diff.formatted);
-                // Todo set font color back to black (might be green or red)
+            if(phone.status == Phone.FORMATTED) {
+                SpanStringHolder span = spanStrings.get(phone.id);
+
+                pHolder.originalTV.setText(span.original);
+                pHolder.formattedTV.setText(span.formatted);
                 pHolder.checkBox.setEnabled(true);
                 pHolder.checkBox.setChecked(phone.toSave);
             }

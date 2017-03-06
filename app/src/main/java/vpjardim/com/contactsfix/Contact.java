@@ -15,9 +15,9 @@ import java.util.ArrayList;
  */
 public class Contact implements Parcelable {
 
-    public String name;
-    public String lookup;
-    public ArrayList<Phone> phones;
+    public final String name;
+    public final String lookup;
+    public final ArrayList<Phone> phones;
 
     public Contact(String name, String lookup) {
         this.name = name;
@@ -50,6 +50,7 @@ public class Contact implements Parcelable {
     private Contact(Parcel in) {
         name = in.readString();
         lookup = in.readString();
+        phones = new ArrayList<>();
         in.readTypedList(phones, Phone.CREATOR);
     }
 

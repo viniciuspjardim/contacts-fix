@@ -13,17 +13,21 @@ import android.os.Parcelable;
  */
 public class Phone implements Parcelable {
 
+    private static int nextId = 1;
+
     public static final int NO_DIFF    = 1;
     public static final int FORMATTED  = 2;
     public static final int FORMAT_ERR = 3;
 
-    public String original;
-    public String formatted;
-    public int status;
-    public boolean toSave;
+    public final int id;
+    public final String original;
+    public final String formatted;
+    public final int status;
+    public final boolean toSave;
 
     public Phone(String original, String formatted) {
 
+        this.id = nextId++;
         this.original = original;
         this.formatted = formatted;
 
@@ -44,10 +48,13 @@ public class Phone implements Parcelable {
     // ======== Parcelable stuff ========>
 
     private Phone(Parcel in) {
+        id = in.readInt();
         original = in.readString();
         formatted = in.readString();
         status = in.readInt();
         toSave = in.readInt() == 1;
+
+        if(id >= nextId) nextId = id + 1;
     }
 
     @Override
@@ -55,6 +62,7 @@ public class Phone implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(original);
         dest.writeString(formatted);
         dest.writeInt(status);

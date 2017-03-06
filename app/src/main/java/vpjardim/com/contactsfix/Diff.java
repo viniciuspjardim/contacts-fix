@@ -27,8 +27,6 @@ public class Diff {
     public int colorOriginal = Color.parseColor("#FFCDD2");
     public int colorFormatted = Color.parseColor("#C8E6C9");
 
-
-
     public void diffHighlight(String originalStr, String formattedStr) {
 
         System.out.println("diffHighlight =======>");
