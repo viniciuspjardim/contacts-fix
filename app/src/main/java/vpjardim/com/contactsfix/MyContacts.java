@@ -1,3 +1,7 @@
+/*
+ * Copyright 2017 Vinícius Petrocione Jardim
+ */
+
 package vpjardim.com.contactsfix;
 
 import android.os.Bundle;
@@ -9,6 +13,10 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+/**
+ * @author Vinícius Jardim
+ * 2017/02/15
+ */
 public class MyContacts extends AppCompatActivity {
 
     @Override

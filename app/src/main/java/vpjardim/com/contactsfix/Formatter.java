@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Vinícius Jardim
- * 15/02/2017
+ * 2017/02/15
  */
 public class Formatter {
 
@@ -35,6 +35,9 @@ public class Formatter {
         /** +(add sign) 0-3 digits  */
         public String countryCode;
 
+        /** Country 2 letters ISO code */
+        public String country;
+
         /** Carrier code */
         public String dddCode;
 
@@ -58,6 +61,7 @@ public class Formatter {
             preFormatted = null;
             iddCode = null;
             countryCode = null;
+            country = null;
             dddCode = null;
             areaCode = null;
             number1 = null;
@@ -113,11 +117,16 @@ public class Formatter {
 
         preFormat(np);
         if(logError(np)) return null;
-        getCountryCode(np);
+        countryCode(np);
         if(logError(np)) return null;
 
         if(np.countryCode == null || np.countryCode.equals("55")) {
             brazil(np);
+            if(logError(np)) return null;
+            assemble(np);
+        }
+        else if(np.countryCode.equals("1")) {
+            nanp(np);
             if(logError(np)) return null;
             assemble(np);
         }
@@ -155,39 +164,38 @@ public class Formatter {
         if(np.preFormatted.length() < MIN) np.error = "size < MIN";
     }
 
-    public static Codes.Row getCountryCode(NumberParts np) {
+    public static void countryCode(NumberParts np) {
 
-        if(!np.addSign) return null;
+        if(!np.addSign) return;
 
-        Codes.Row codeRow;
+        Tables.CRow codeRow;
         String cc;
 
         // Try 1 digit code
         cc = np.preFormatted.substring(0, 1);
-        codeRow = Codes.table.get(cc);
+        codeRow = Tables.countryCodes.get(cc);
 
         // Try 2 digits code
         if(codeRow == null) {
             cc = np.preFormatted.substring(0, 2);
-            codeRow = Codes.table.get(cc);
+            codeRow = Tables.countryCodes.get(cc);
         }
 
         // Try 3 digits code
         if(codeRow == null) {
             cc = np.preFormatted.substring(0, 3);
-            codeRow = Codes.table.get(cc);
+            codeRow = Tables.countryCodes.get(cc);
         }
 
         // If code found
         if(codeRow != null) {
             np.countryCode = codeRow.countryCode;
+            np.country = codeRow.isoCode2.toLowerCase();
             np.cache.delete(0, np.countryCode.length());
 
             System.out.println(codeRow.toString());
             System.out.println("cache = " + np.cache);
         }
-
-        return codeRow;
     }
 
     public static void brazil(NumberParts np) {
@@ -213,6 +221,25 @@ public class Formatter {
             np.number1 = np.cache.toString();
         }
         else np.error = "Unknown format";
+    }
+
+    public static void nanp(NumberParts np) {
+
+        int size = np.cache.length();
+        np.areaCode = np.cache.substring(0, 3);
+        Tables.ARow nanp = Tables.areaCodes.get(np.areaCode);
+
+        if(size == 10 && nanp != null) {
+            np.areaCode = np.cache.substring(0, 3);
+            np.country = nanp.isoCode2.toLowerCase();;
+            np.cache.delete(0, 3);
+            np.number2 = np.cache.substring(np.cache.length() -4, np.cache.length());
+            np.cache.delete(np.cache.length() -4, np.cache.length());
+            np.number1 = np.cache.toString();
+        }
+        else {
+            np.error = "Unknown format";
+        }
     }
 
     public static void assemble(NumberParts np) {

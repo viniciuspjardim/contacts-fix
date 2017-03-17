@@ -18,7 +18,7 @@ import difflib.Patch;
 
 /**
  * @author Vinícius Jardim
- * 16/02/2017
+ * 2017/02/16
  */
 public class Diff {
 

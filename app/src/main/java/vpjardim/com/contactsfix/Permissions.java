@@ -12,7 +12,7 @@ import android.support.v4.content.ContextCompat;
 
 /**
  * @author Vinícius Jardim
- * 15/02/2017
+ * 2017/02/15
  */
 public class Permissions {
 

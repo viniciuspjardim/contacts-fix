@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 /**
  * @author Vinícius Jardim
- * 14/02/2017
+ * 2017/02/14
  */
 public class Contact implements Parcelable {
 
@@ -25,8 +25,8 @@ public class Contact implements Parcelable {
         this.phones = new ArrayList<>();
     }
 
-    public void addNumber(String original, String formatted) {
-        phones.add(new Phone(original, formatted));
+    public void addNumber(String original, String formatted, String country) {
+        phones.add(new Phone(original, formatted, country));
     }
 
     @Override

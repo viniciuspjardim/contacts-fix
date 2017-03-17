@@ -9,7 +9,7 @@ import android.os.Parcelable;
 
 /**
  * @author Vinícius Jardim
- * 17/02/2017
+ * 2017/02/17
  */
 public class Phone implements Parcelable {
 
@@ -22,14 +22,16 @@ public class Phone implements Parcelable {
     public final int id;
     public final String original;
     public final String formatted;
+    public final String country;
     public final int status;
     public final boolean toSave;
 
-    public Phone(String original, String formatted) {
+    public Phone(String original, String formatted, String country) {
 
         this.id = nextId++;
         this.original = original;
         this.formatted = formatted;
+        this.country = country;
 
         if(formatted == null) {
             status = FORMAT_ERR;
@@ -51,6 +53,7 @@ public class Phone implements Parcelable {
         id = in.readInt();
         original = in.readString();
         formatted = in.readString();
+        country = in.readString();
         status = in.readInt();
         toSave = in.readInt() == 1;
 
@@ -65,6 +68,7 @@ public class Phone implements Parcelable {
         dest.writeInt(id);
         dest.writeString(original);
         dest.writeString(formatted);
+        dest.writeString(country);
         dest.writeInt(status);
         dest.writeInt(toSave ? 1 : 0);
     }

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author Vinícius Jardim
- * 14/02/2017
+ * 2017/02/14
  */
 public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -95,7 +95,7 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
             Log.i(TAG, "phone = " + phone + " ============");
 
             String phoneFix = Formatter.format(phone, np);
-            contact.addNumber(phone, phoneFix);
+            contact.addNumber(phone, phoneFix, np.country);
 
         } while(cursor.moveToNext());
 

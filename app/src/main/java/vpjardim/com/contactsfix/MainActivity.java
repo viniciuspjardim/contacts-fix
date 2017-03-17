@@ -1,3 +1,7 @@
+/*
+ * Copyright 2017 Vinícius Petrocione Jardim
+ */
+
 package vpjardim.com.contactsfix;
 
 import android.os.Bundle;
@@ -12,6 +16,10 @@ import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 
+/**
+ * @author Vinícius Jardim
+ * 2017/02/14
+ */
 public class MainActivity extends AppCompatActivity implements Permissions.Callback,
         ContactsLoader.Callback {
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 
 /**
  * @author Vinícius Jardim
- * 14/02/2017
+ * 2017/02/14
  */
 public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
@@ -47,11 +48,13 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
         TextView originalTV;
         TextView formattedTV;
+        ImageView flagImg;
         CheckBox checkBox;
 
         public PhoneViewHolder(View view) {
             originalTV = (TextView) view.findViewById(R.id.tvOriginal);
             formattedTV = (TextView) view.findViewById(R.id.tvFormatted);
+            flagImg = (ImageView) view.findViewById(R.id.flagImg);
             checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         }
     }
@@ -150,6 +153,33 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
             pHolder.originalTV.setTextColor(Color.parseColor("#8A000000"));
             pHolder.formattedTV.setTextColor(Color.parseColor("#8A000000"));
+
+
+            int id = 0;
+
+            if(phone.country != null) {
+                id = context.getResources().getIdentifier(
+                        phone.country, "drawable", context.getPackageName());
+            }
+
+            if(id != 0) {
+                pHolder.flagImg.setImageResource(id);
+                pHolder.flagImg.setAlpha(1f);
+            }
+            else {
+                pHolder.flagImg.setImageResource(R.drawable.flag);
+                pHolder.flagImg.setAlpha(0.38f);
+            }
+
+            //if(phone.country != null) {
+            //    //try {
+            //        int id = context.getResources().getIdentifier(phone.country, "drawable", context.getPackageName());
+            //        pHolder.flagImg.setImageResource(id);
+            //    //}
+            //    //catch(Exception e) {
+            //    //    e.printStackTrace();
+            //    //}
+            //}
 
             if(phone.status == Phone.FORMATTED) {
                 SpanStringHolder span = spanStrings.get(phone.id);
