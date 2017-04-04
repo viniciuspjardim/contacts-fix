@@ -45,6 +45,7 @@ hs_err_pid*
 libs/armeabi/
 libs/armeabi-v7a/
 libs/x86/
+libs/x64/
 .idea/
 *.ipr
 *.iws
