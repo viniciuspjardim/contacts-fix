@@ -5,5 +5,6 @@
     <string name="format_no_dif">&lt;unchanged&gt;</string>
     <string name="format_err">&lt;unknown format&gt;</string>
     <string name="tt_loading">Loading...</string>
+    <string name="tt_no_contacts">No contacts found!</string>
     <string name="tt_no_permission">Error: no contacts access!</string>
 </resources>

@@ -1,20 +1,54 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+
+    def keyPropFile = file("D:/Dropbox/Vinicius/seguranca/AndroidKey.properties")
+    def keyProp = new Properties()
+    keyProp.load(new FileInputStream(keyPropFile))
+
+    signingConfigs {
+        AndroidKey {
+            storeFile file(keyProp['storeFile'])
+            storePassword keyProp['storePassword']
+            keyAlias keyProp['keyAlias']
+            keyPassword keyProp['keyPassword']
+        }
+    }
+
     buildToolsVersion "25.0.2"
+    compileSdkVersion 25
+
     defaultConfig {
-        applicationId "vpjardim.com.contatctsfix"
+        signingConfig signingConfigs.AndroidKey
+        applicationId "com.gmail.vpjardimdev.contatctsfix"
         minSdkVersion 18
         targetSdkVersion 25
         versionCode 1
         versionName "0.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            pseudoLocalesEnabled true
+            debuggable true
+            applicationIdSuffix ".debug"
+        }
+        // Debug with ProGuard enabled
+        debugPG {
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
+            minifyEnabled true
+            pseudoLocalesEnabled false
+            debuggable true
+            applicationIdSuffix ".debugPG"
+        }
+        release {
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
+            minifyEnabled true
+            pseudoLocalesEnabled false
+            debuggable false
+            signingConfig signingConfigs.AndroidKey
         }
     }
 }
@@ -24,8 +58,7 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    // compile files('libs/java-diffHighlight-utils-2.1.1.jar')
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
     testCompile 'junit:junit:4.12'
 }

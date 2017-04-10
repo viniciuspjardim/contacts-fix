@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
             }
         });
 
-        if(contacts.size() > 0) vf.showNext();//startButton.callOnClick();
+        if(contacts.size() > 0) vf.showNext();
     }
 
     public void processContacts() {
@@ -98,11 +98,17 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
     @Override
     public void onLoadFinished() {
-        ContactsArrayAdapter adapter = (ContactsArrayAdapter)listView.getAdapter();
-        adapter.processSpanStrings();
-        adapter.notifyDataSetChanged();
-        Log.i(TAG, "Number of contacts = " + contacts.size());
-        vf.showNext();
+
+        if(contacts.size() > 0) {
+
+            ContactsArrayAdapter adapter = (ContactsArrayAdapter) listView.getAdapter();
+            adapter.processSpanStrings();
+            adapter.notifyDataSetChanged();
+            Log.i(TAG, "Number of contacts = " + contacts.size());
+            vf.showNext();
+        }
+        else
+            Toast.makeText(this, R.string.tt_no_contacts, Toast.LENGTH_SHORT).show();
     }
 
     @Override

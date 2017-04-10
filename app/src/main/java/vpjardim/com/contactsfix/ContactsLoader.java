@@ -60,7 +60,13 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
 
-        if(cursor.getCount() == 0) return;
+        // No contacts found calling callback and returning
+        if(cursor.getCount() == 0) {
+            if(callback != null) callback.onLoadFinished();
+            return;
+        }
+
+        // Otherwise if there are contacts in the cursor...
 
         int phoneIndex = cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER);
         int nameIndex = cursor.getColumnIndex(CommonDataKinds.Contactables.DISPLAY_NAME);
