@@ -1,4 +1,4 @@
-package vpjardim.com.contactsfix;
+package com.vpjardim.contactsfix;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("vpjardim.com.contatctsfix", appContext.getPackageName());
+        assertEquals("com.vpjardim.contatctsfix", appContext.getPackageName());
     }
 }

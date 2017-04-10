@@ -2,7 +2,7 @@
  * Copyright 2017 Vinícius Petrocione Jardim
  */
 
-package vpjardim.com.contactsfix;
+package com.vpjardim.contactsfix;
 
 import java.util.HashMap;
 

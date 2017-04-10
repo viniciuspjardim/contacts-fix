@@ -1,4 +1,4 @@
-package vpjardim.com.contatctsfix;
+package vpjardim.contatctsfix;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

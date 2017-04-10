@@ -1,4 +1,4 @@
-package vpjardim.com.contactsfix;
+package com.vpjardim.contactsfix;
 
 import org.junit.Test;
 

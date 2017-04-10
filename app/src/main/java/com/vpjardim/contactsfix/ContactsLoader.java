@@ -2,7 +2,7 @@
  * Copyright 2017 Vinícius Petrocione Jardim
  */
 
-package vpjardim.com.contactsfix;
+package com.vpjardim.contactsfix;
 
 import android.app.LoaderManager;
 import android.content.Context;
