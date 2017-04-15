@@ -6,6 +6,8 @@ package com.vpjardim.contactsfix;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pools;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
@@ -27,13 +29,12 @@ import java.util.HashMap;
  */
 public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
-    public static class SpanStringHolder {
-
-        public SpannableString original;
-        public SpannableString formatted;
+    private static class SpanStringHolder {
+        SpannableString original;
+        SpannableString formatted;
     }
 
-    public static class ContactViewHolder {
+    private static class ContactViewHolder {
 
         TextView contactNameTV;
         LinearLayout linearLayout;
@@ -44,7 +45,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         }
     }
 
-    public static class PhoneViewHolder {
+    private static class PhoneViewHolder {
 
         TextView originalTV;
         TextView formattedTV;
@@ -97,7 +98,8 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public @NonNull View getView(int position, @Nullable View convertView,
+            @NonNull ViewGroup parent) {
 
         // Performance Profiling - profile7
         // Reusing convertView, using ViewHolder to phone_item, Reusing all children of

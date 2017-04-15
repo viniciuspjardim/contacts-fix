@@ -20,15 +20,19 @@ public class Phone implements Parcelable {
     public static final int FORMAT_ERR = 3;
 
     public final int id;
+    public final int dataId;
+    public final int rawId;
     public final String original;
     public final String formatted;
     public final String country;
     public final int status;
     public final boolean toSave;
 
-    public Phone(String original, String formatted, String country) {
+    public Phone(int dataId, int rawId, String original, String formatted, String country) {
 
         this.id = nextId++;
+        this.dataId = dataId;
+        this.rawId = rawId;
         this.original = original;
         this.formatted = formatted;
         this.country = country;
@@ -51,6 +55,8 @@ public class Phone implements Parcelable {
 
     private Phone(Parcel in) {
         id = in.readInt();
+        dataId = in.readInt();
+        rawId = in.readInt();
         original = in.readString();
         formatted = in.readString();
         country = in.readString();
@@ -66,6 +72,8 @@ public class Phone implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
+        dest.writeInt(dataId);
+        dest.writeInt(rawId);
         dest.writeString(original);
         dest.writeString(formatted);
         dest.writeString(country);

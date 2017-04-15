@@ -25,8 +25,9 @@ public class Contact implements Parcelable {
         this.phones = new ArrayList<>();
     }
 
-    public void addNumber(String original, String formatted, String country) {
-        phones.add(new Phone(original, formatted, country));
+    public void addNumber(int dataId, int rawId, String original, String formatted, String country)
+    {
+        phones.add(new Phone(dataId, rawId, original, formatted, country));
     }
 
     @Override

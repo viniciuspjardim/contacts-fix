@@ -23,20 +23,22 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements Permissions.Callback,
         ContactsLoader.Callback {
 
+    // Todo use async task to load and save contacts
+
     public static final String TAG = "MActivity";
     public static final String CONTACTS_KEY = "CONTACTS";
 
-    Toolbar toolbar;
-    ViewFlipper vf;
-    FloatingActionButton startButton;
-    ListView listView;
+    private Toolbar toolbar;
+    private ViewFlipper vf;
+    private FloatingActionButton startButton;
+    private FloatingActionButton saveButton;
+    private ListView listView;
 
-    Permissions permissions;
-    ArrayList<Contact> contacts;
-
+    private Permissions permissions;
+    private ArrayList<Contact> contacts;
 
     @Override
-    protected void onCreate(Bundle saved) {
+    protected void onCreate(final Bundle saved) {
 
         super.onCreate(saved);
         Log.i(TAG, "onCreate ========>");
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
         vf = (ViewFlipper) findViewById(R.id.viewFlipper);
         startButton = (FloatingActionButton) findViewById(R.id.btStart);
+        saveButton = (FloatingActionButton) findViewById(R.id.btSave);
 
         if(saved != null)
             contacts = saved.getParcelableArrayList(CONTACTS_KEY);
@@ -60,39 +63,73 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         adapter.processSpanStrings();
         listView.setAdapter(adapter);
 
+        // Todo fix button multi clicks problems
+
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                startButton.setActivated(false);
 
+                // If it already has the permission run processContacts();
+                // Else, it will request the permission and wait the call back method
                 if(permissions.checkPermission(
                         MainActivity.this, Permissions.READ_CONTACTS, MainActivity.this)) {
                     processContacts();
                 }
-                startButton.setActivated(true);
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+
+                // If it already has the permission run processContacts();
+                // Else, it will request the permission and wait the call back method
+                if(permissions.checkPermission(
+                        MainActivity.this, Permissions.WRITE_CONTACTS, MainActivity.this)) {
+                    saveContacts();
+                }
             }
         });
 
         if(contacts.size() > 0) vf.showNext();
     }
 
-    public void processContacts() {
+    private void processContacts() {
         Toast.makeText(this, R.string.tt_loading, Toast.LENGTH_SHORT).show();
         ContactsLoader contactsLoader = new ContactsLoader(this, this, contacts);
         getLoaderManager().restartLoader(0, null, contactsLoader);
     }
 
-    @Override
-    public void onPermissionGranted() { processContacts(); }
-
-    @Override
-    public void onPermissionDenied() {
-        Toast.makeText(this, R.string.tt_no_permission, Toast.LENGTH_SHORT).show();
+    private void saveContacts() {
+        Toast.makeText(this, R.string.tt_saving, Toast.LENGTH_SHORT).show();
+        ContactsSave.save(contacts, this);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String strPermissions[], int[] grantResults) {
+    public void onPermissionGranted(int permission) {
+
+        if(permission == Permissions.READ_CONTACTS) {
+            processContacts();
+        }
+        else if(permission == Permissions.WRITE_CONTACTS) {
+            saveContacts();
+        }
+    }
+
+    @Override
+    public void onPermissionDenied(int permission) {
+
+        if(permission == Permissions.READ_CONTACTS) {
+            Toast.makeText(this, R.string.tt_err_read_contacts, Toast.LENGTH_SHORT).show();
+        }
+        else if(permission == Permissions.WRITE_CONTACTS) {
+            Toast.makeText(this, R.string.tt_err_write_contacts, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String strPermissions[],
+            int[] grantResults) {
         permissions.onPermissionsResult(requestCode, grantResults);
     }
 

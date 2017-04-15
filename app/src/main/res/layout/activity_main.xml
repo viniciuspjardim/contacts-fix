@@ -55,11 +55,24 @@
             android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fastScrollEnabled="true"/>
+            android:fastScrollEnabled="true"
+            android:paddingBottom="88dp"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"/>
 
-        <include
-            android:id="@+id/listItem"
-            layout="@layout/list_item"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            app:backgroundTint="@color/accentA400"
+            app:fabSize="auto"
+            app:rippleColor="@color/primary"
+            app:srcCompat="@android:drawable/ic_menu_save"/>
 
     </RelativeLayout>
 </ViewFlipper>

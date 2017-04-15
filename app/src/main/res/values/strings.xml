@@ -5,6 +5,8 @@
     <string name="format_no_dif">&lt;unchanged&gt;</string>
     <string name="format_err">&lt;unknown format&gt;</string>
     <string name="tt_loading">Loading...</string>
+    <string name="tt_saving">Saving...</string>
     <string name="tt_no_contacts">No contacts found!</string>
-    <string name="tt_no_permission">Error: no contacts access!</string>
+    <string name="tt_err_read_contacts">Error: no contacts access!</string>
+    <string name="tt_err_write_contacts">Error: no saving contacts access!</string>
 </resources>

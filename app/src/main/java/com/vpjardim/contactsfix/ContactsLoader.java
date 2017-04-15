@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds;
+import android.provider.ContactsContract.CommonDataKinds.Contactables;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private Context context;
     private Callback callback;
-    ArrayList<Contact> contacts;
+    private ArrayList<Contact> contacts;
 
     public ContactsLoader(Context context, Callback callback, ArrayList<Contact> contacts) {
         this.context = context;
@@ -43,12 +44,12 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
         String selection =
                 "((" +
-                CommonDataKinds.Contactables.DISPLAY_NAME + " NOTNULL) AND (" +
-                CommonDataKinds.Contactables.DISPLAY_NAME + " != '') AND (" +
-                CommonDataKinds.Contactables.HAS_PHONE_NUMBER + " = 1))";
+                Contactables.DISPLAY_NAME + " IS NOT NULL) AND (" +
+                Contactables.DISPLAY_NAME + " != '') AND (" +
+                Contactables.HAS_PHONE_NUMBER + " = 1))";
 
-        String sortBy = "(UPPER(" + CommonDataKinds.Contactables.DISPLAY_NAME + ") || " +
-                CommonDataKinds.Contactables.LOOKUP_KEY + ")";
+        String sortBy = "(UPPER(" + Contactables.DISPLAY_NAME + ") || " +
+                Contactables.LOOKUP_KEY + ")";
 
         Log.i(TAG, "selection: <" + selection + ">");
         Log.i(TAG, "sortBy: <" + sortBy + ">");
@@ -58,52 +59,57 @@ public class ContactsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> arg, final Cursor cursor) {
 
-        // No contacts found calling callback and returning
-        if(cursor.getCount() == 0) {
+        if(cursor == null) {
             if(callback != null) callback.onLoadFinished();
+            Log.i(TAG, "Cursor is null");
             return;
         }
 
-        // Otherwise if there are contacts in the cursor...
+        try {
 
-        int phoneIndex = cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER);
-        int nameIndex = cursor.getColumnIndex(CommonDataKinds.Contactables.DISPLAY_NAME);
-        int lookupIndex = cursor.getColumnIndex(CommonDataKinds.Contactables.LOOKUP_KEY);
-        int mimeIndex = cursor.getColumnIndex(CommonDataKinds.Contactables.MIMETYPE);
+            int dataIdIndex = cursor.getColumnIndex(Contactables._ID);
+            int rawIdIndex = cursor.getColumnIndex(Contactables.RAW_CONTACT_ID);
+            int phoneIndex = cursor.getColumnIndex(CommonDataKinds.Phone.NUMBER);
+            int nameIndex = cursor.getColumnIndex(Contactables.DISPLAY_NAME);
+            int mimeIndex = cursor.getColumnIndex(Contactables.MIMETYPE);
+            int lookupIndex = cursor.getColumnIndex(Contactables.LOOKUP_KEY);
 
-        cursor.moveToFirst();
+            String prevLookupKey = "";
+            Contact contact = null;
+            Formatter.NumberParts np = new Formatter.NumberParts();
 
-        String prevLookupKey = "";
-        Contact contact = null;
-        Formatter.NumberParts np = new Formatter.NumberParts();
+            while(cursor.moveToNext()) {
 
-        do {
+                String mimeType = cursor.getString(mimeIndex);
+                if(!mimeType.equals(CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) continue;
 
-            String mimeType = cursor.getString(mimeIndex);
-            if(!mimeType.equals(CommonDataKinds.Phone.CONTENT_ITEM_TYPE)) continue;
+                String lookupKey = cursor.getString(lookupIndex);
 
-            String lookupKey = cursor.getString(lookupIndex);
+                if(!prevLookupKey.equals(lookupKey)) {
 
-            if(!prevLookupKey.equals(lookupKey)) {
+                    String name = cursor.getString(nameIndex);
+                    contact = new Contact(name, lookupKey);
+                    contacts.add(contact);
+                    prevLookupKey = lookupKey;
 
-                String name = cursor.getString(nameIndex);
-                contact = new Contact(name, lookupKey);
-                contacts.add(contact);
-                prevLookupKey = lookupKey;
+                    Log.i(TAG, "********** " + name + " **********");
+                    Log.i(TAG, "lookupKey = " + prevLookupKey);
+                }
 
-                Log.i(TAG, "********** " + name + " **********");
-                Log.i(TAG, "lookupKey = " + prevLookupKey);
+                int dataId = cursor.getInt(dataIdIndex);
+                int rawContactId = cursor.getInt(rawIdIndex);
+                String phone = cursor.getString(phoneIndex);
+                Log.i(TAG, "phone = " + phone + " ============");
+
+                String phoneFix = Formatter.format(phone, np);
+                contact.addNumber(dataId, rawContactId, phone, phoneFix, np.country);
             }
-
-            String phone = cursor.getString(phoneIndex);
-            Log.i(TAG, "phone = " + phone + " ============");
-
-            String phoneFix = Formatter.format(phone, np);
-            contact.addNumber(phone, phoneFix, np.country);
-
-        } while(cursor.moveToNext());
+        }
+        finally {
+            cursor.close();
+        }
 
         if(callback != null) callback.onLoadFinished();
     }
