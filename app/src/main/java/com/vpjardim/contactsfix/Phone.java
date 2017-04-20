@@ -15,9 +15,10 @@ public class Phone implements Parcelable {
 
     private static int nextId = 1;
 
-    public static final int NO_DIFF    = 1;
-    public static final int FORMATTED  = 2;
-    public static final int FORMAT_ERR = 3;
+    public static final int NO_DIFF          = 1;
+    public static final int FORMATTED        = 2;
+    public static final int FORMATTED_MANUAL = 3;
+    public static final int FORMAT_ERR       = 4;
 
     public final int id;
     public final int dataId;
@@ -26,7 +27,7 @@ public class Phone implements Parcelable {
     public final String formatted;
     public final String country;
     public final int status;
-    public final boolean toSave;
+    public boolean toSave;
 
     public Phone(int dataId, int rawId, String original, String formatted, String country) {
 
@@ -37,17 +38,17 @@ public class Phone implements Parcelable {
         this.formatted = formatted;
         this.country = country;
 
-        if(formatted == null) {
+        if(formatted != null && !original.equals(formatted)) {
+            status = FORMATTED;
+            toSave = true;
+        }
+        else if(formatted == null) {
             status = FORMAT_ERR;
             toSave = false;
         }
-        else if(original.equals(formatted)) {
+        else {
             status = NO_DIFF;
             toSave = false;
-        }
-        else {
-            status = FORMATTED;
-            toSave = true;
         }
     }
 
@@ -63,6 +64,7 @@ public class Phone implements Parcelable {
         status = in.readInt();
         toSave = in.readInt() == 1;
 
+        // Update the nextId in all constructors
         if(id >= nextId) nextId = id + 1;
     }
 

@@ -34,7 +34,8 @@ public class ContactsSave {
                 String phoneStr = phone.formatted;
                 if(phoneStr == null) phoneStr = phone.original;
 
-                if(phone.status != Phone.FORMATTED) continue;
+                // Skip phone numbers that should not be saved
+                if(phone.status != Phone.FORMATTED || !phone.toSave) continue;
 
                 Log.i(TAG, "_ID = " + phone.dataId);
                 Log.i(TAG, "RAW_CONTACT_ID = " + phone.rawId);

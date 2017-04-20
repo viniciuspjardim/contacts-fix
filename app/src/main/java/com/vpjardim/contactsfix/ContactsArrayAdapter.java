@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pools;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +28,8 @@ import java.util.HashMap;
  * 2017/02/14
  */
 public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
+
+    public static final String TAG = "ContactsArrAdpt";
 
     private static class SpanStringHolder {
         SpannableString original;
@@ -125,7 +127,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         int i = 0;
         int cCount = holder.linearLayout.getChildCount();
 
-        for(Phone phone : contact.phones) {
+        for(final Phone phone : contact.phones) {
 
             View numberRow;
 
@@ -137,25 +139,26 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 holder.linearLayout.addView(numberRow);
             }
 
-            PhoneViewHolder pHolder = (PhoneViewHolder)numberRow.getTag();
+            final PhoneViewHolder pHolder = (PhoneViewHolder)numberRow.getTag();
 
             numberRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "nrow", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "Touch phone " + phone.original + " > " + phone.formatted);
                 }
             });
 
             pHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "checkBox", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "CheckBox " + phone.original + " > " + phone.formatted);
+                    Log.i(TAG, "CheckBox checked == " + pHolder.checkBox.isChecked());
+                    phone.toSave = pHolder.checkBox.isChecked();
                 }
             });
 
             pHolder.originalTV.setTextColor(Color.parseColor("#8A000000"));
             pHolder.formattedTV.setTextColor(Color.parseColor("#8A000000"));
-
 
             int id = 0;
 
@@ -172,16 +175,6 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 pHolder.flagImg.setImageResource(R.drawable.flag);
                 pHolder.flagImg.setAlpha(0.38f);
             }
-
-            //if(phone.country != null) {
-            //    //try {
-            //        int id = context.getResources().getIdentifier(phone.country, "drawable", context.getPackageName());
-            //        pHolder.flagImg.setImageResource(id);
-            //    //}
-            //    //catch(Exception e) {
-            //    //    e.printStackTrace();
-            //    //}
-            //}
 
             if(phone.status == Phone.FORMATTED) {
                 SpanStringHolder span = spanStrings.get(phone.id);
