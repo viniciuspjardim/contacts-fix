@@ -78,22 +78,13 @@ public class Formatter {
     /** Matches anything except digits 0-9 and add sign "+" */
     public static final Pattern p2 = Pattern.compile("[^\\+\\d]");
 
+    // Todo fix 2 or more add signs possible bug
+
     /** Default country code */
     public static String DCC = "55";
 
     /** Default area code */
     public static String DAC = "63";
-
-    public static void main(String[] args) {
-
-        format("+34606122257", null);
-        format("32131233", null);
-        format("+1 (647) 526-8963", null);
-        format("14 (63) 984568863", null);
-        format("+55 63 99930-6102", null);
-        format("+238 743 17 19", null);
-        format("+1 314 488 6534", null);
-    }
 
     public static boolean logError(NumberParts np) {
 

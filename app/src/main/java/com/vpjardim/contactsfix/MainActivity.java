@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         ContactsLoader.Callback {
 
     // Todo use async task to load and save contacts
+    // Todo after reloading all contacts should be unchecked
 
     public static final String TAG = "MActivity";
     public static final String CONTACTS_KEY = "CONTACTS";
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
     private Permissions permissions;
     private ArrayList<Contact> contacts;
+    private ContactsArrayAdapter adapter;
 
     @Override
     protected void onCreate(final Bundle saved) {
@@ -44,23 +46,18 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         Log.i(TAG, "onCreate ========>");
 
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        toolbar     = (Toolbar) findViewById(R.id.toolbar);
+        vf          = (ViewFlipper) findViewById(R.id.viewFlipper);
+        startButton = (FloatingActionButton) findViewById(R.id.btStart);
+        saveButton  = (FloatingActionButton) findViewById(R.id.btSave);
+        listView    = (ListView) findViewById(R.id.lvContacts);
 
         permissions = new Permissions();
+        contacts    = new ArrayList<>();
+        adapter     = new ContactsArrayAdapter(this, contacts);
 
-        vf = (ViewFlipper) findViewById(R.id.viewFlipper);
-        startButton = (FloatingActionButton) findViewById(R.id.btStart);
-        saveButton = (FloatingActionButton) findViewById(R.id.btSave);
-
-        if(saved != null)
-            contacts = saved.getParcelableArrayList(CONTACTS_KEY);
-        if(contacts == null)
-            contacts = new ArrayList<>();
-
-        listView = (ListView) findViewById(R.id.lvContacts);
-        ContactsArrayAdapter adapter = new ContactsArrayAdapter(this, contacts);
-        adapter.processSpanStrings();
+        setSupportActionBar(toolbar);
         listView.setAdapter(adapter);
 
         // Todo fix button multi clicks problems
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
                 // Else, it will request the permission and wait the call back method
                 if(permissions.checkPermission(
                         MainActivity.this, Permissions.READ_CONTACTS, MainActivity.this)) {
-                    processContacts();
+                    processContacts(true);
                 }
             }
         });
@@ -90,26 +87,59 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
                 }
             }
         });
-
-        if(contacts.size() > 0) vf.showNext();
     }
 
-    private void processContacts() {
-        Toast.makeText(this, R.string.tt_loading, Toast.LENGTH_SHORT).show();
+    private void processContacts(boolean  showToast) {
+        if(showToast)
+            Toast.makeText(this, R.string.tt_loading, Toast.LENGTH_SHORT).show();
+
         ContactsLoader contactsLoader = new ContactsLoader(this, this, contacts);
         getLoaderManager().restartLoader(0, null, contactsLoader);
     }
 
     private void saveContacts() {
-        Toast.makeText(this, R.string.tt_saving, Toast.LENGTH_SHORT).show();
-        ContactsSave.save(contacts, this);
+
+        Toast toast = Toast.makeText(this, R.string.tt_saving, Toast.LENGTH_SHORT);
+        toast.show();
+
+        int cont = ContactsSave.save(contacts, this);
+
+        if(cont > 0) {
+
+            String text = getString(R.string.tt_saved, cont);
+            toast.setText(text);
+            toast.show();
+
+            contacts.clear();
+            adapter.clear();
+            processContacts(false);
+        }
+        else {
+            toast.setText(R.string.tt_not_saved);
+            toast.show();
+        }
+    }
+
+    @Override
+    public void onLoadFinished() {
+
+        if(contacts.size() > 0) {
+
+            ContactsArrayAdapter adapter = (ContactsArrayAdapter) listView.getAdapter();
+            adapter.processSpanStrings();
+            adapter.notifyDataSetChanged();
+            Log.i(TAG, "Number of contacts = " + contacts.size());
+            vf.setDisplayedChild(1);
+        }
+        else
+            Toast.makeText(this, R.string.tt_no_contacts, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onPermissionGranted(int permission) {
 
         if(permission == Permissions.READ_CONTACTS) {
-            processContacts();
+            processContacts(true);
         }
         else if(permission == Permissions.WRITE_CONTACTS) {
             saveContacts();
@@ -131,21 +161,6 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
     public void onRequestPermissionsResult(int requestCode, String strPermissions[],
             int[] grantResults) {
         permissions.onPermissionsResult(requestCode, grantResults);
-    }
-
-    @Override
-    public void onLoadFinished() {
-
-        if(contacts.size() > 0) {
-
-            ContactsArrayAdapter adapter = (ContactsArrayAdapter) listView.getAdapter();
-            adapter.processSpanStrings();
-            adapter.notifyDataSetChanged();
-            Log.i(TAG, "Number of contacts = " + contacts.size());
-            vf.showNext();
-        }
-        else
-            Toast.makeText(this, R.string.tt_no_contacts, Toast.LENGTH_SHORT).show();
     }
 
     @Override

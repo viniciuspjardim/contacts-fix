@@ -1,78 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewFlipper
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-
-    android:id="@+id/viewFlipper"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/permissions"
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
+    <ViewFlipper
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+
+        android:id="@+id/viewFlipper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar"/>
-
-        <TextView
-            android:id="@+id/tvExplanation"
-            android:text="@string/tv_explanation"
-            android:layout_margin="16dp"
-            android:textAlignment="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/btStart"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_centerInParent="true"
-            app:fabSize="auto"
-            app:srcCompat="@drawable/ic_launch_white_48dp"
-            app:backgroundTint="@color/accentA400"
-            app:rippleColor="@color/primary"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
-
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar"/>
-
-        <ListView
-            android:id="@+id/lvContacts"
-            android:layout_below="@id/toolbar"
+        <RelativeLayout
+            android:id="@+id/permissions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fastScrollEnabled="true"
-            android:paddingBottom="88dp"
-            android:clipToPadding="false"
-            android:scrollbarStyle="outsideOverlay"/>
+            tools:context=".MainActivity">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="14dp"
-            android:layout_marginBottom="20dp"
-            android:clickable="true"
-            app:backgroundTint="@color/accentA400"
-            app:fabSize="auto"
-            app:rippleColor="@color/primary"
-            app:srcCompat="@android:drawable/ic_menu_save"/>
+            <TextView
+                android:id="@+id/tvExplanation"
+                android:text="@string/tv_explanation"
+                android:layout_margin="16dp"
+                android:textAlignment="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/btStart"/>
 
-    </RelativeLayout>
-</ViewFlipper>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/btStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_centerInParent="true"
+                app:fabSize="auto"
+                app:srcCompat="@drawable/ic_launch_white_48dp"
+                app:backgroundTint="@color/accentA400"
+                app:rippleColor="@color/primary"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
+
+            <ListView
+                android:id="@+id/lvContacts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fastScrollEnabled="true"
+                android:paddingBottom="88dp"
+                android:clipToPadding="false"
+                android:scrollbarStyle="outsideOverlay"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/btSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="20dp"
+                android:clickable="true"
+                app:backgroundTint="@color/accentA400"
+                app:fabSize="auto"
+                app:rippleColor="@color/primary"
+                app:srcCompat="@android:drawable/ic_menu_save"/>
+
+        </RelativeLayout>
+    </ViewFlipper>
+</LinearLayout>

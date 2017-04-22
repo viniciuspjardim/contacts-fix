@@ -18,10 +18,17 @@ public class ContactsSave {
 
     public static final String TAG = "CSave";
 
-    public static void save(ArrayList<Contact> contacts, final Context context) {
+    /**
+     * Returns the number of contacts saved (with modifications)
+     * @param contacts
+     * @param context
+     * @return
+     */
+    public static int save(ArrayList<Contact> contacts, final Context context) {
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
         ContentProviderOperation.Builder op;
+        int cont = 0;
 
         for(Contact contact : contacts) {
 
@@ -63,6 +70,7 @@ public class ContactsSave {
                 }
 
                 ops.add(op.build());
+                cont++;
             }
         }
 
@@ -72,5 +80,7 @@ public class ContactsSave {
         catch(Exception e) {
             Log.e(TAG, "Exception encountered while inserting contact: " + e);
         }
+
+        return cont;
     }
 }

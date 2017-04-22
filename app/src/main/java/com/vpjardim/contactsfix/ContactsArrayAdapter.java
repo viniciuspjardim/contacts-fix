@@ -231,4 +231,10 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     private void recyclePhoneView(View view) {
         phoneViewPool.release(view);
     }
+
+    @Override
+    public void clear() {
+        super.clear();
+        spanStrings.clear();
+    }
 }
