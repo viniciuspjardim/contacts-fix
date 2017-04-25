@@ -25,7 +25,8 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
     // Todo use async task to load and save contacts
     // Todo after reloading all contacts should be unchecked
-    // Todo landscape mode not working when rotated, text not at the center
+    // Todo default country code and area code form
+    // Todo default places flag and flag shadow
 
     public static final String TAG = "MActivity";
     public static final String CONTACTS_KEY = "CONTACTS";
@@ -36,8 +37,8 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
     private FloatingActionButton saveButton;
     private ListView listView;
 
-    private Permissions permissions;
     private ArrayList<Contact> contacts;
+    private Permissions permissions;
     private ContactsArrayAdapter adapter;
 
     @Override
@@ -54,9 +55,21 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         saveButton  = (FloatingActionButton) findViewById(R.id.btSave);
         listView    = (ListView) findViewById(R.id.lvContacts);
 
+        // There are things saved when the screen is rotated for example. Then put the stuff in
+        // contacts array to not lose state
+        if(saved != null)
+            contacts = saved.getParcelableArrayList(CONTACTS_KEY);
+        if(contacts == null)
+            contacts = new ArrayList<>();
+
         permissions = new Permissions();
-        contacts    = new ArrayList<>();
         adapter     = new ContactsArrayAdapter(this, contacts);
+
+        // If there are contacts loaded process and go to the contacts display layout
+        if(contacts.size() > 0) {
+            adapter.processSpanStrings();
+            vf.setDisplayedChild(1);
+        }
 
         setSupportActionBar(toolbar);
         listView.setAdapter(adapter);
