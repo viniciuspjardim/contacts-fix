@@ -1,0 +1,5 @@
+apply plugin: 'java'
+
+dependencies {
+    compile group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
+}

@@ -25,5 +25,7 @@
     public static int e(...);
 }
 
-# Todo find which file has the translation of obfuscated to real methods name
+-dontwarn javax.annotation.**
+
+# Todo see which proguard files need to be saved
 # Only with this file we can debug the problemas reported by the users at the release versions

@@ -4,6 +4,8 @@
 
 package com.vpjardim.contactsfix;
 
+import android.util.Log;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +14,8 @@ import java.util.regex.Pattern;
  * 2017/02/15
  */
 public class Formatter {
+
+    public static final String TAG = "Frmtr";
 
     public static class NumberParts {
 
@@ -89,8 +93,8 @@ public class Formatter {
     public static boolean logError(NumberParts np) {
 
         if(np.error != null) {
-            System.out.println("Error = " + np.error);
-            System.out.println("===");
+            Log.i(TAG, "Error = " + np.error);
+            Log.i(TAG, "===");
             return true;
         }
         return false;
@@ -98,8 +102,8 @@ public class Formatter {
 
     public static String format(String number, NumberParts np) {
 
-        System.out.println("Format Call -> ");
-        System.out.println("number = " + number);
+        Log.i(TAG, "Format Call -> ");
+        Log.i(TAG, "number = " + number);
 
         if(np == null) np = new NumberParts();
 
@@ -122,7 +126,7 @@ public class Formatter {
             assemble(np);
         }
 
-        System.out.println("===");
+        Log.i(TAG, "===");
 
         return np.formatted;
     }
@@ -142,7 +146,7 @@ public class Formatter {
         }
 
         np.addSign = np.preFormatted.charAt(0) == '+';
-        System.out.println(np.preFormatted.charAt(0) + " :: " + np.addSign);
+        Log.i(TAG, np.preFormatted.charAt(0) + " :: " + np.addSign);
 
         Matcher m1 = p.matcher(np.original);
 
@@ -150,7 +154,7 @@ public class Formatter {
         np.preFormatted = m1.replaceAll("");
         np.cache.append(np.preFormatted);
 
-        System.out.println("preFormatted = " + np.preFormatted);
+        Log.i(TAG, "preFormatted = " + np.preFormatted);
 
         if(np.preFormatted.length() < MIN) np.error = "size < MIN";
     }
@@ -184,8 +188,8 @@ public class Formatter {
             np.country = codeRow.isoCode2.toLowerCase();
             np.cache.delete(0, np.countryCode.length());
 
-            System.out.println(codeRow.toString());
-            System.out.println("cache = " + np.cache);
+            Log.i(TAG, codeRow.toString());
+            Log.i(TAG, "cache = " + np.cache);
         }
     }
 
@@ -245,6 +249,6 @@ public class Formatter {
 
         np.formatted = np.cache.toString();
 
-        System.out.println("formatted = " + np.formatted);
+        Log.i(TAG, "formatted = " + np.formatted);
     }
 }

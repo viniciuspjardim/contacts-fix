@@ -37,14 +37,14 @@ android {
         }
         // Debug with ProGuard enabled
         debugPG {
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled true
             pseudoLocalesEnabled false
             debuggable true
             applicationIdSuffix ".debugPG"
         }
         release {
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled true
             pseudoLocalesEnabled false
             debuggable false

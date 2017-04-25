@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
     // Todo use async task to load and save contacts
     // Todo after reloading all contacts should be unchecked
+    // Todo landscape mode not working when rotated, text not at the center
 
     public static final String TAG = "MActivity";
     public static final String CONTACTS_KEY = "CONTACTS";

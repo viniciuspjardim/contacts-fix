@@ -1,0 +1,30 @@
+
+@author Vinícius Jardim
+2017/04/22
+
+
+==== REMEMBER ====
+
+Before a release commit and publish on Play Store
+ - Increment versions on /android/build.gradle (versionCode, versionName)
+ - See dependencies versions to use the newer ones
+ - Make sure all debug options are off
+ - See if there is \t indentation
+ - Optimize imports
+ - Inspect project (manifest, folders, libs, external libs, todos, files headers, gradle files,
+   package organization, .gitignore files)
+ - See git differences
+ - Choose the release build variant
+ - Run tests
+ - Clean the project
+ - Run app to test execution on Android emulators and real devices
+ - Pack the app in .apk (release and debug variants) and move the packed files to history folder
+    - Rename the apk files to include the version number
+ - Test apk files on Android emulators and real devices
+ - Keep folders app\build\outputs\ 'logs' and 'mapping' because these files are used to debug the
+   release build
+    - Save these two folders in the history folder and rename it to include the version number
+ - commit
+ - add tag with the version number: git tag -a vX.X.X -m "version X.X.X"
+ - Upload release apk on Play Console (https://play.google.com/apps/publish/?hl=pt-BR)
+ - Optional: delete the app\build\, build\ and captures\ folders

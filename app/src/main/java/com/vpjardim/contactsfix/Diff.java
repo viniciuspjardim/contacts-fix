@@ -7,6 +7,7 @@ package com.vpjardim.contactsfix;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,8 @@ import difflib.Patch;
  */
 public class Diff {
 
+    public static final String TAG = "Diff";
+
     public SpannableString original;
     public SpannableString formatted;
     public int colorOriginal = Color.parseColor("#FFCDD2");
@@ -29,7 +32,7 @@ public class Diff {
 
     public void diffHighlight(String originalStr, String formattedStr) {
 
-        System.out.println("diffHighlight =======>");
+        Log.i(TAG, "diffHighlight =======>");
 
         original = new SpannableString(originalStr);
         formatted = new SpannableString(formattedStr);
@@ -39,11 +42,11 @@ public class Diff {
 
         Patch<String> patch = DiffUtils.diff(originalList, formattedList);
 
-        System.out.println("originalStr = " + originalStr);
-        System.out.println("formattedStr  = " + formattedStr);
+        Log.i(TAG, "originalStr = " + originalStr);
+        Log.i(TAG, "formattedStr  = " + formattedStr);
         highlight(patch);
 
-        System.out.println("diffHighlight end ====");
+        Log.i(TAG, "diffHighlight end ====");
     }
 
     private void highlight(Patch<String> patch) {
@@ -56,7 +59,7 @@ public class Diff {
             int ini;
             int end;
 
-            System.out.println("originalChunk = " + originalChunk);
+            Log.i(TAG, "originalChunk = " + originalChunk);
 
             ini = originalChunk.getPosition() -1;
             end = ini + originalChunk.size();
@@ -66,7 +69,7 @@ public class Diff {
                 original.setSpan(span, ini, end, 0);
             }
 
-            System.out.println("formattedChunk = " + formattedChunk);
+            Log.i(TAG, "formattedChunk = " + formattedChunk);
 
             ini = formattedChunk.getPosition() -1;
             end = ini + formattedChunk.size();
