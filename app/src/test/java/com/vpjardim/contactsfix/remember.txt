@@ -6,7 +6,6 @@
 ==== REMEMBER ====
 
 Before a release commit and publish on Play Store
- - Increment versions on /android/build.gradle (versionCode, versionName)
  - See dependencies versions to use the newer ones
  - Make sure all debug options are off
  - See if there is \t indentation
@@ -24,7 +23,9 @@ Before a release commit and publish on Play Store
  - Keep folders app\build\outputs\ 'logs' and 'mapping' because these files are used to debug the
    release build
     - Save these two folders in the history folder and rename it to include the version number
- - commit
+ - Commit: git commit -a -m ""
  - add tag with the version number: git tag -a vX.X.X -m "version X.X.X"
  - Upload release apk on Play Console (https://play.google.com/apps/publish/?hl=pt-BR)
+ - Increment versions on /android/build.gradle (versionCode, versionName)
+ - Commit new version: git commit -a -m "Prepared for next development iteration"
  - Optional: delete the app\build\, build\ and captures\ folders
