@@ -85,10 +85,10 @@ public class Formatter {
     // Todo fix 2 or more add signs possible bug
 
     /** Default country code */
-    public static String DCC = "55";
+    public static String DCC = null;
 
     /** Default area code */
-    public static String DAC = "63";
+    public static String DAC = null;
 
     public static boolean logError(NumberParts np) {
 
@@ -240,6 +240,12 @@ public class Formatter {
     public static void assemble(NumberParts np) {
 
         np.cache.delete(0, np.cache.length());
+
+        // Todo create a method that make the validation
+        if(DCC == null || DAC == null) {
+            np.error = "DCC or DAC invalid";
+            return;
+        }
 
         if(np.countryCode == null) np.countryCode = DCC;
         if(np.areaCode == null) np.areaCode = DAC;

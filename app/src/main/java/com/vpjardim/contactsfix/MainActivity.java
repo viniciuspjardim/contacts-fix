@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
     private Toolbar toolbar;
     private ViewFlipper vf;
+    private EditText countryCodeEt;
+    private EditText areaCodeEt;
     private FloatingActionButton startButton;
     private FloatingActionButton saveButton;
     private ListView listView;
@@ -49,11 +52,13 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
         setContentView(R.layout.activity_main);
 
-        toolbar     = (Toolbar) findViewById(R.id.toolbar);
-        vf          = (ViewFlipper) findViewById(R.id.viewFlipper);
-        startButton = (FloatingActionButton) findViewById(R.id.btStart);
-        saveButton  = (FloatingActionButton) findViewById(R.id.btSave);
-        listView    = (ListView) findViewById(R.id.lvContacts);
+        toolbar       = (Toolbar) findViewById(R.id.toolbar);
+        vf            = (ViewFlipper) findViewById(R.id.viewFlipper);
+        countryCodeEt = (EditText) findViewById(R.id.etCCode);
+        areaCodeEt    = (EditText) findViewById(R.id.etACode);
+        startButton   = (FloatingActionButton) findViewById(R.id.btStart);
+        saveButton    = (FloatingActionButton) findViewById(R.id.btSave);
+        listView      = (ListView) findViewById(R.id.lvContacts);
 
         // There are things saved when the screen is rotated for example. Then put the stuff in
         // contacts array to not lose state
@@ -104,6 +109,12 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
     }
 
     private void processContacts(boolean  showToast) {
+
+        // Todo validation of the country and area default codes
+
+        Formatter.DCC = countryCodeEt.getText().toString();
+        Formatter.DAC = areaCodeEt.getText().toString();
+
         if(showToast)
             Toast.makeText(this, R.string.tt_loading, Toast.LENGTH_SHORT).show();
 
