@@ -164,7 +164,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
             if(phone.country != null) {
                 id = context.getResources().getIdentifier(
-                        phone.country, "drawable", context.getPackageName());
+                        "flag_" + phone.country, "drawable", context.getPackageName());
             }
 
             if(id != 0) {
@@ -172,7 +172,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 pHolder.flagImg.setAlpha(1f);
             }
             else {
-                pHolder.flagImg.setImageResource(R.drawable.flag);
+                pHolder.flagImg.setImageResource(R.drawable.flag_00);
                 pHolder.flagImg.setAlpha(0.38f);
             }
 

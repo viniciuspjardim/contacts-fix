@@ -8,6 +8,8 @@
         It is recommended to <b>backup your contacts</b> before proceed.</string>
     <string name="format_no_dif">&lt;unchanged&gt;</string>
     <string name="format_err">&lt;unknown format&gt;</string>
+    <string name="tt_err_country_code">Unsupported country code</string>
+    <string name="tt_err_area_code">Unsupported area code</string>
     <string name="tt_loading">Loading...</string>
     <string name="tt_saving">Saving...</string>
     <string name="tt_saved">%1$d phone(s) saved. Reloading...</string>

@@ -115,7 +115,7 @@ public class Formatter {
         countryCode(np);
         if(logError(np)) return null;
 
-        if(np.countryCode == null || np.countryCode.equals("55")) {
+        if(np.countryCode.equals("55")) {
             brazil(np);
             if(logError(np)) return null;
             assemble(np);
@@ -124,6 +124,10 @@ public class Formatter {
             nanp(np);
             if(logError(np)) return null;
             assemble(np);
+        }
+        else {
+            np.error = "Country not supported";
+            return null;
         }
 
         Log.i(TAG, "===");
@@ -161,34 +165,55 @@ public class Formatter {
 
     public static void countryCode(NumberParts np) {
 
-        if(!np.addSign) return;
+        Tables.CRow cRow;
 
-        Tables.CRow codeRow;
-        String cc;
+        if(np.addSign) {
 
-        // Try 1 digit code
-        cc = np.preFormatted.substring(0, 1);
-        codeRow = Tables.countryCodes.get(cc);
+            String cc;
 
-        // Try 2 digits code
-        if(codeRow == null) {
-            cc = np.preFormatted.substring(0, 2);
-            codeRow = Tables.countryCodes.get(cc);
+            // Try 1 digit code
+            cc = np.preFormatted.substring(0, 1);
+            cRow = Tables.countryCodes.get(cc);
+
+            // Try 2 digits code
+            if(cRow == null) {
+                cc = np.preFormatted.substring(0, 2);
+                cRow = Tables.countryCodes.get(cc);
+            }
+
+            // Try 3 digits code
+            if(cRow == null) {
+                cc = np.preFormatted.substring(0, 3);
+                cRow = Tables.countryCodes.get(cc);
+            }
+
+            // If code found
+            if(cRow != null) {
+                np.countryCode = cRow.countryCode;
+                np.country = cRow.isoCode2.toLowerCase();
+                np.cache.delete(0, np.countryCode.length());
+
+                Log.i(TAG, cRow.toString());
+                Log.i(TAG, "cache = " + np.cache);
+            }
+            else np.error = "Unknown Country Code";
         }
 
-        // Try 3 digits code
-        if(codeRow == null) {
-            cc = np.preFormatted.substring(0, 3);
-            codeRow = Tables.countryCodes.get(cc);
-        }
+        // When no add sing, use the default country code
+        else {
 
-        // If code found
-        if(codeRow != null) {
-            np.countryCode = codeRow.countryCode;
-            np.country = codeRow.isoCode2.toLowerCase();
-            np.cache.delete(0, np.countryCode.length());
+            cRow = Tables.countryCodes.get(DCC);
 
-            Log.i(TAG, codeRow.toString());
+            // Todo create a method that make the validation
+            if(DCC == null || DAC == null || cRow == null) {
+                np.error = "DCC or DAC invalid";
+                return;
+            }
+
+            np.countryCode = cRow.countryCode;
+            np.country = cRow.isoCode2.toLowerCase();
+
+            Log.i(TAG, "Def - " + cRow.toString());
             Log.i(TAG, "cache = " + np.cache);
         }
     }
@@ -197,20 +222,25 @@ public class Formatter {
 
         int size = np.cache.length();
 
-        // Mobile or residential with 3 digits carrier code
+        // Mobile or residential with 3 digits carrier code: removing carrier code
         if((size == 13 || size == 14) && np.cache.charAt(0) == '0') {
             np.cache.delete(0, 3);
             size = np.cache.length();
         }
 
-        // Mobile or residential with 2 digits area code
-        if(size == 10 || size == 11) {
-            np.areaCode = np.cache.substring(0, 2);
-            np.cache.delete(0, 2);
+        // Mobile or residential without 2 digits area code: adding the default area code
+        if(size < 10) {
+            np.cache.insert(0, DAC);
             size = np.cache.length();
         }
 
-        if(size == 9 || size == 8) {
+        np.areaCode = np.cache.substring(0, 2);
+        np.cache.delete(0, 2);
+        Tables.ARow aRow = Tables.areaCodes.get(np.countryCode + "/" + np.areaCode);
+
+        if(aRow != null) np.country = aRow.isoCode2.toLowerCase();
+
+        if((size == 10 || size == 11) && aRow != null) {
             np.number2 = np.cache.substring(np.cache.length() -4, np.cache.length());
             np.cache.delete(np.cache.length() -4, np.cache.length());
             np.number1 = np.cache.toString();
@@ -221,13 +251,20 @@ public class Formatter {
     public static void nanp(NumberParts np) {
 
         int size = np.cache.length();
-        np.areaCode = np.cache.substring(0, 3);
-        Tables.ARow nanp = Tables.areaCodes.get(np.areaCode);
 
-        if(size == 10 && nanp != null) {
-            np.areaCode = np.cache.substring(0, 3);
-            np.country = nanp.isoCode2.toLowerCase();;
-            np.cache.delete(0, 3);
+        // Mobile or residential without 2 digits area code: adding the default area code
+        if(size < 10) {
+            np.cache.insert(0, DAC);
+            size = np.cache.length();
+        }
+
+        np.areaCode = np.cache.substring(0, 3);
+        np.cache.delete(0, 3);
+        Tables.ARow aRow = Tables.areaCodes.get(np.countryCode + "/" + np.areaCode);
+
+        if(aRow != null) np.country = aRow.isoCode2.toLowerCase();
+
+        if(size == 10 && aRow != null) {
             np.number2 = np.cache.substring(np.cache.length() -4, np.cache.length());
             np.cache.delete(np.cache.length() -4, np.cache.length());
             np.number1 = np.cache.toString();
@@ -240,15 +277,6 @@ public class Formatter {
     public static void assemble(NumberParts np) {
 
         np.cache.delete(0, np.cache.length());
-
-        // Todo create a method that make the validation
-        if(DCC == null || DAC == null) {
-            np.error = "DCC or DAC invalid";
-            return;
-        }
-
-        if(np.countryCode == null) np.countryCode = DCC;
-        if(np.areaCode == null) np.areaCode = DAC;
 
         np.cache.append("+").append(np.countryCode).append(" ").append(np.areaCode).append(" ").
                 append(np.number1).append("-").append(np.number2);

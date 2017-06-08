@@ -108,12 +108,24 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         });
     }
 
-    private void processContacts(boolean  showToast) {
-
-        // Todo validation of the country and area default codes
+    private void processContacts(boolean showToast) {
 
         Formatter.DCC = countryCodeEt.getText().toString();
         Formatter.DAC = areaCodeEt.getText().toString();
+
+        // Checking if default country code is ok
+        Tables.CRow cRow = Tables.countryCodes.get(Formatter.DCC);
+        if(cRow == null) {
+            Toast.makeText(this, R.string.tt_err_country_code, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Checking if default area code is ok
+        Tables.ARow aRow = Tables.areaCodes.get(Formatter.DCC + "/" + Formatter.DAC);
+        if(aRow == null) {
+            Toast.makeText(this, R.string.tt_err_area_code, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if(showToast)
             Toast.makeText(this, R.string.tt_loading, Toast.LENGTH_SHORT).show();
