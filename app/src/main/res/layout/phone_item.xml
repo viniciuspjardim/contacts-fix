@@ -54,7 +54,7 @@
         android:background="@color/accentA200"/>
 
     <ImageView
-        android:id="@+id/flagImg"
+        android:id="@+id/ivFlag"
         android:layout_width="22dp"
         android:layout_height="22dp"
         android:layout_alignBottom="@id/tvFormatted"

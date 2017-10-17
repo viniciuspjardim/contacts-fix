@@ -8,7 +8,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.util.Pools;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,13 +53,13 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
         TextView originalTV;
         TextView formattedTV;
-        ImageView flagImg;
+        ImageView flagIV;
         CheckBox checkBox;
 
         public PhoneViewHolder(View view) {
             originalTV = (TextView) view.findViewById(R.id.tvOriginal);
             formattedTV = (TextView) view.findViewById(R.id.tvFormatted);
-            flagImg = (ImageView) view.findViewById(R.id.flagImg);
+            flagIV = (ImageView) view.findViewById(R.id.ivFlag);
             checkBox = (CheckBox) view.findViewById(R.id.checkBox);
         }
     }
@@ -66,6 +68,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
     private final Context context;
     private final ArrayList<Contact> contacts;
+    private final PhoneFragment phoneFragment;
     private final HashMap<Integer, SpanStringHolder> spanStrings;
     private final Diff diff;
     private final LayoutInflater inflater;
@@ -77,6 +80,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         this.context = context;
         this.contacts = contacts;
 
+        phoneFragment = new PhoneFragment();
         spanStrings = new HashMap<>();
         diff = new Diff();
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -120,7 +124,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
             holder = (ContactViewHolder) view.getTag();
         }
 
-        Contact contact = contacts.get(position);
+        final Contact contact = contacts.get(position);
 
         holder.contactNameTV.setText(contact.name);
 
@@ -145,6 +149,10 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 @Override
                 public void onClick(View v) {
                     Log.i(TAG, "Touch phone " + phone.original + " > " + phone.formatted);
+                    FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
+                    phoneFragment.setData(contact.name, phone);
+                    phoneFragment.show(fm, "");
+
                 }
             });
 
@@ -168,12 +176,12 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
             }
 
             if(id != 0) {
-                pHolder.flagImg.setImageResource(id);
-                pHolder.flagImg.setAlpha(1f);
+                pHolder.flagIV.setImageResource(id);
+                pHolder.flagIV.setAlpha(1f);
             }
             else {
-                pHolder.flagImg.setImageResource(R.drawable.flag_00);
-                pHolder.flagImg.setAlpha(0.38f);
+                pHolder.flagIV.setImageResource(R.drawable.flag_00);
+                pHolder.flagIV.setAlpha(0.38f);
             }
 
             if(phone.status == Phone.FORMATTED) {

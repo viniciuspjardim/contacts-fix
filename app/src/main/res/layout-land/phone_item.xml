@@ -33,7 +33,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
     <ImageView
-        android:id="@+id/flagImg"
+        android:id="@+id/ivFlag"
         android:layout_width="22dp"
         android:layout_height="22dp"
         android:layout_alignBottom="@id/tvFormatted"

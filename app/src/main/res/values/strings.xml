@@ -19,4 +19,5 @@
     <string name="tt_err_write_contacts">Error: no saving contacts access!</string>
     <string name="tv_country_code">Default country code</string>
     <string name="tv_area_code">Default area code</string>
+    <string name="tv_unknown_country">Unknown country</string>
 </resources>

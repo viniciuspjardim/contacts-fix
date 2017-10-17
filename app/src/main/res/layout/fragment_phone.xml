@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="18dp"
+    android:paddingRight="24dp"
+    android:paddingBottom="18dp"
+    android:paddingLeft="24dp">
+
+    <TextView
+        android:id="@+id/tvDialogContactName"
+        android:text="Contact name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tvDialogCountryName"
+            android:text="Country"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+        <ImageView
+            android:id="@+id/ivDialogFlag"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:alpha="0.38"
+            app:srcCompat="@drawable/flag_00"/>
+    </RelativeLayout>
+</LinearLayout>
