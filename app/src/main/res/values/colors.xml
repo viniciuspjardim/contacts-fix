@@ -9,4 +9,5 @@
     <color name="green100">#C8E6C9</color>    <!-- Green 100  -->
     <color name="red700">#D32F2F</color>      <!-- Red 700    -->
     <color name="green700">#388E3C</color>    <!-- Green 700  -->
+    <color name="lightGray">#20000000</color> <!-- Light gray -->
 </resources>

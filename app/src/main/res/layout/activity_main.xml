@@ -109,13 +109,17 @@
             android:layout_height="match_parent"
             tools:context=".MainActivity">
 
-            <ListView
-                android:id="@+id/lvContacts"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvContacts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fastScrollEnabled="true"
                 android:paddingBottom="88dp"
                 android:clipToPadding="false"
+                android:scrollbars="vertical"
+                android:fastScrollEnabled="true"
+                android:scrollbarThumbVertical="@color/accentA400"
+                android:scrollbarTrackVertical="@color/lightGray"
+                android:scrollbarSize="6dp"
                 android:scrollbarStyle="outsideOverlay"/>
 
             <android.support.design.widget.FloatingActionButton

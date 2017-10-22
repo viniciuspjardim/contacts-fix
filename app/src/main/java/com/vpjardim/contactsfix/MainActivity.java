@@ -7,11 +7,12 @@ package com.vpjardim.contactsfix;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
     // Todo after reloading all contacts should be unchecked
     // Todo default country code and area code form
     // Todo default places flag and flag shadow
+    // Todo duplicated phone numbers in some contacts like in 'Alessandra'. Maybe it's WhatsApp
+    // Todo implement a custom scrollbar
 
     public static final String TAG = "MActivity";
     public static final String CONTACTS_KEY = "CONTACTS";
@@ -38,11 +41,11 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
     private EditText areaCodeEt;
     private FloatingActionButton startButton;
     private FloatingActionButton saveButton;
-    private ListView listView;
+    private RecyclerView recyclerView;
 
     private ArrayList<Contact> contacts;
     private Permissions permissions;
-    private ContactsArrayAdapter adapter;
+    private ContactsAdapter adapter;
 
     @Override
     protected void onCreate(final Bundle saved) {
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         areaCodeEt    = (EditText) findViewById(R.id.etACode);
         startButton   = (FloatingActionButton) findViewById(R.id.btStart);
         saveButton    = (FloatingActionButton) findViewById(R.id.btSave);
-        listView      = (ListView) findViewById(R.id.lvContacts);
+        recyclerView  = (RecyclerView) findViewById(R.id.rvContacts);
 
         // There are things saved when the screen is rotated for example. Then put the stuff in
         // contacts array to not lose state
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
             contacts = new ArrayList<>();
 
         permissions = new Permissions();
-        adapter     = new ContactsArrayAdapter(this, contacts);
+        adapter     = new ContactsAdapter(this, contacts);
 
         // If there are contacts loaded process and go to the contacts display layout
         if(contacts.size() > 0) {
@@ -77,7 +80,12 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
         }
 
         setSupportActionBar(toolbar);
-        listView.setAdapter(adapter);
+
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager layout = new LinearLayoutManager(this);
+        layout.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layout);
+        recyclerView.setAdapter(adapter);
 
         // Todo fix button multi clicks problems
 
@@ -162,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements Permissions.Callb
 
         if(contacts.size() > 0) {
 
-            ContactsArrayAdapter adapter = (ContactsArrayAdapter) listView.getAdapter();
+            ContactsAdapter adapter = (ContactsAdapter) recyclerView.getAdapter();
             adapter.processSpanStrings();
             adapter.notifyDataSetChanged();
             Log.i(TAG, "Number of contacts = " + contacts.size());

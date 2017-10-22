@@ -6,20 +6,17 @@ package com.vpjardim.contactsfix;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.Pools;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,7 +26,7 @@ import java.util.HashMap;
  * @author Vinícius Jardim
  * 2017/02/14
  */
-public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
+public class ContactsAdapter extends RecyclerView.Adapter<ContactHolder> {
 
     public static final String TAG = "ContactsArrAdpt";
 
@@ -38,23 +35,12 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         SpannableString formatted;
     }
 
-    private static class ContactViewHolder {
-
-        TextView contactNameTV;
-        LinearLayout linearLayout;
-
-        public ContactViewHolder(View view) {
-            contactNameTV = (TextView) view.findViewById(R.id.tvContactName);
-            linearLayout = (LinearLayout)view.findViewById(R.id.phoneItems);
-        }
-    }
-
     private static class PhoneViewHolder {
 
-        TextView originalTV;
-        TextView formattedTV;
-        ImageView flagIV;
-        CheckBox checkBox;
+        private final TextView originalTV;
+        private final TextView formattedTV;
+        private final ImageView flagIV;
+        private final CheckBox checkBox;
 
         public PhoneViewHolder(View view) {
             originalTV = (TextView) view.findViewById(R.id.tvOriginal);
@@ -68,14 +54,12 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
 
     private final Context context;
     private final ArrayList<Contact> contacts;
+
     private final PhoneFragment phoneFragment;
     private final HashMap<Integer, SpanStringHolder> spanStrings;
     private final Diff diff;
-    private final LayoutInflater inflater;
 
-    public ContactsArrayAdapter(Context context, ArrayList<Contact> contacts) {
-
-        super(context, R.layout.activity_main, contacts);
+    public ContactsAdapter(Context context, ArrayList<Contact> contacts) {
 
         this.context = context;
         this.contacts = contacts;
@@ -83,46 +67,18 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         phoneFragment = new PhoneFragment();
         spanStrings = new HashMap<>();
         diff = new Diff();
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    public void processSpanStrings() {
-
-        spanStrings.clear();
-
-        for(Contact c : contacts) {
-            for(Phone p : c.phones) {
-                if(p.status != Phone.FORMATTED) continue;
-
-                diff.diffHighlight(p.original, p.formatted);
-                SpanStringHolder spans = new SpanStringHolder();
-                spans.formatted = diff.formatted;
-                spans.original = diff.original;
-                spanStrings.put(p.id, spans);
-            }
-        }
     }
 
     @Override
-    public @NonNull View getView(int position, @Nullable View convertView,
-            @NonNull ViewGroup parent) {
+    public ContactHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        // Performance Profiling - profile7
-        // Reusing convertView, using ViewHolder to phone_item, Reusing all children of
-        // linearLayout, using ViewHolder to phone_item, caching diffs
+        View view = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.list_item, parent, false);
+        return new ContactHolder(view);
+    }
 
-        View view;
-        ContactViewHolder holder;
-
-        if(convertView == null) {
-            view = inflater.inflate(R.layout.list_item, parent, false);
-            holder = new ContactViewHolder(view);
-            view.setTag(holder);
-        }
-        else {
-            view = convertView;
-            holder = (ContactViewHolder) view.getTag();
-        }
+    @Override
+    public void onBindViewHolder(ContactHolder holder, int position) {
 
         final Contact contact = contacts.get(position);
 
@@ -139,7 +95,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
                 numberRow = holder.linearLayout.getChildAt(i);
             else {
                 // Getting a pooled object
-                numberRow = obtainPhoneView(parent);
+                numberRow = obtainPhoneView(holder.linearLayout);
                 holder.linearLayout.addView(numberRow);
             }
 
@@ -219,10 +175,30 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
         if(i < cCount)
             holder.linearLayout.removeViews(i, cCount - i);
 
-        return view;
+    }
+
+    @Override
+    public int getItemCount() { return contacts.size(); }
+
+    public void processSpanStrings() {
+
+        spanStrings.clear();
+
+        for(Contact c : contacts) {
+            for(Phone p : c.phones) {
+                if(p.status != Phone.FORMATTED) continue;
+
+                diff.diffHighlight(p.original, p.formatted);
+                SpanStringHolder spans = new SpanStringHolder();
+                spans.formatted = diff.formatted;
+                spans.original = diff.original;
+                spanStrings.put(p.id, spans);
+            }
+        }
     }
 
     private View obtainPhoneView(ViewGroup parent) {
+
         View instance = (View) phoneViewPool.acquire();
 
         // It will only create a new view if the pool is empty
@@ -230,19 +206,16 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
             // Todo should update parent?
             return instance;
         else {
-            View view = inflater.inflate(R.layout.phone_item, parent, false);
+
+            View view = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.phone_item, parent, false);
+
             view.setTag(new PhoneViewHolder(view));
             return view;
         }
     }
 
-    private void recyclePhoneView(View view) {
-        phoneViewPool.release(view);
-    }
+    private void recyclePhoneView(View view) { phoneViewPool.release(view); }
 
-    @Override
-    public void clear() {
-        super.clear();
-        spanStrings.clear();
-    }
+    public void clear() { spanStrings.clear(); }
 }
