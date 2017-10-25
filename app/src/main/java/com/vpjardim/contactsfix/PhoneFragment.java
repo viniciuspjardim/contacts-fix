@@ -1,10 +1,14 @@
+/*
+ * Copyright 2017 Vinícius Petrocione Jardim
+ */
+
 package com.vpjardim.contactsfix;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,8 +18,9 @@ import android.widget.TextView;
  * @author Vinícius Jardim
  * 2017/10/17
  */
-
 public class PhoneFragment extends DialogFragment {
+
+    private Dialog dialog;
 
     private TextView nameTV;
     private TextView countryTV;
@@ -30,7 +35,7 @@ public class PhoneFragment extends DialogFragment {
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle saved) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -55,15 +60,16 @@ public class PhoneFragment extends DialogFragment {
                     "flag_" + phone.country, "drawable", getActivity().getPackageName());
         }
 
-        if(id != 0) {
-            flagIV.setImageResource(id);
-            flagIV.setAlpha(1f);
-        }
-        else {
-            flagIV.setImageResource(R.drawable.flag_00);
-            flagIV.setAlpha(0.38f);
-        }
+        if(id != 0) flagIV.setImageResource(id);
+        else flagIV.setImageResource(R.drawable.flag_00);
 
-        return builder.create();
+        dialog = builder.create();
+        return dialog;
+    }
+
+    @Override
+    public void dismiss() {
+        if(dialog != null) super.dismiss();
+        dialog = null;
     }
 }

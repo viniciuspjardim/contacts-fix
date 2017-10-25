@@ -1,143 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
-
-    <ViewFlipper
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-
-        android:id="@+id/viewFlipper"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvContacts"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:paddingBottom="88dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        android:fastScrollEnabled="true"
+        android:scrollbarThumbVertical="@color/accentA400"
+        android:scrollbarTrackVertical="@color/lightGray"
+        android:scrollbarSize="6dp"
+        android:scrollbarStyle="outsideOverlay"/>
 
-        <LinearLayout
-            android:id="@+id/permissions"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:context=".MainActivity">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar"/>
+    </android.support.design.widget.AppBarLayout>
 
-            <TextView
-                android:id="@+id/tvExplanation"
-                android:text="@string/tv_explanation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:textAlignment="center"
-                android:layout_gravity="center"
-                android:padding="8dp"
-                android:elevation="2dp"
-                android:background="@color/accentA100"/>
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text="@string/tt_loading"/>
 
-            <TextView
-                android:id="@+id/tvCCode"
-                android:text="@string/tv_country_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_gravity="center"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        app:layout_anchorGravity="bottom|right|end"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        app:backgroundTint="@color/accentA400"
+        app:fabSize="auto"
+        app:rippleColor="@color/primary"
+        app:srcCompat="@android:drawable/ic_menu_save"/>
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center">
-
-                <EditText
-                    android:id="@+id/etCCode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="3"
-                    android:inputType="number"
-                    android:maxLength="3"
-                    android:textAlignment="center"/>
-
-                <TextView
-                    android:id="@+id/tvAddSign"
-                    android:text="+"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="8dp"/>
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/tvACode"
-                android:text="@string/tv_area_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="center"/>
-
-            <EditText
-                android:id="@+id/etACode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="3"
-                android:inputType="number"
-                android:maxLength="3"
-                android:layout_gravity="center"
-                android:textAlignment="center"/>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/btStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                app:fabSize="auto"
-                android:layout_gravity="center"
-                android:layout_marginTop="32dp"
-                app:srcCompat="@drawable/ic_launch_white_48dp"
-                app:backgroundTint="@color/accentA400"
-                app:rippleColor="@color/primary"/>
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".MainActivity">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rvContacts"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="88dp"
-                android:clipToPadding="false"
-                android:scrollbars="vertical"
-                android:fastScrollEnabled="true"
-                android:scrollbarThumbVertical="@color/accentA400"
-                android:scrollbarTrackVertical="@color/lightGray"
-                android:scrollbarSize="6dp"
-                android:scrollbarStyle="outsideOverlay"/>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/btSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="14dp"
-                android:layout_marginBottom="20dp"
-                android:clickable="true"
-                app:backgroundTint="@color/accentA400"
-                app:fabSize="auto"
-                app:rippleColor="@color/primary"
-                app:srcCompat="@android:drawable/ic_menu_save"/>
-
-        </RelativeLayout>
-
-    </ViewFlipper>
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

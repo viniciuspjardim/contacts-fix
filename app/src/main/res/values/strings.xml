@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
     <string name="app_name">Contacts Fix</string>
     <string name="action_settings">Settings</string>
@@ -12,7 +13,7 @@
     <string name="tt_err_area_code">Unsupported area code</string>
     <string name="tt_loading">Loading...</string>
     <string name="tt_saving">Saving...</string>
-    <string name="tt_saved">%1$d phone(s) saved. Reloading...</string>
+    <string name="tt_saved">%1$d phone(s) saved!</string>
     <string name="tt_not_saved">No contacts to save!</string>
     <string name="tt_no_contacts">No contacts found!</string>
     <string name="tt_err_read_contacts">Error: no contacts access!</string>

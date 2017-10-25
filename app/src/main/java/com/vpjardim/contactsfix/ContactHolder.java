@@ -6,7 +6,6 @@ package com.vpjardim.contactsfix;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,7 +13,6 @@ import android.widget.TextView;
  * @author Vinícius Jardim
  * 2017/10/22
  */
-
 public class ContactHolder extends RecyclerView.ViewHolder {
 
     final TextView contactNameTV;
@@ -24,9 +22,5 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         super(view);
         contactNameTV = (TextView) view.findViewById(R.id.tvContactName);
         linearLayout = (LinearLayout)view.findViewById(R.id.phoneItems);
-    }
-
-    public void bindContact(Contact contact, ViewGroup parent) {
-        contactNameTV.setText(contact.name);
     }
 }

@@ -131,14 +131,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactHolder> {
                         "flag_" + phone.country, "drawable", context.getPackageName());
             }
 
-            if(id != 0) {
-                pHolder.flagIV.setImageResource(id);
-                pHolder.flagIV.setAlpha(1f);
-            }
-            else {
-                pHolder.flagIV.setImageResource(R.drawable.flag_00);
-                pHolder.flagIV.setAlpha(0.38f);
-            }
+            if(id != 0) pHolder.flagIV.setImageResource(id);
+            else pHolder.flagIV.setImageResource(R.drawable.flag_00);
 
             if(phone.status == Phone.FORMATTED) {
                 SpanStringHolder span = spanStrings.get(phone.id);
@@ -214,6 +208,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactHolder> {
             return view;
         }
     }
+
+    public void dialogDismiss() { phoneFragment.dismiss(); }
 
     private void recyclePhoneView(View view) { phoneViewPool.release(view); }
 

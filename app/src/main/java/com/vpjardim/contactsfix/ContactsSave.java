@@ -1,3 +1,7 @@
+/*
+ * Copyright 2017 Vinícius Petrocione Jardim
+ */
+
 package com.vpjardim.contactsfix;
 
 import android.content.ContentProviderOperation;
@@ -13,7 +17,6 @@ import java.util.ArrayList;
  * @author Vinícius Jardim
  * 2017/04/13
  */
-
 public class ContactsSave {
 
     public static final String TAG = "CSave";
