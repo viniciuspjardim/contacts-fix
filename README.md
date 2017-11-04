@@ -5,7 +5,8 @@ the area code when needed. It also format the the phone numbers adding
 spaces and removing unwanted characters.
 
 Assume that the default country code is `+1` and the area code is `314`.
-The phone number `4880506` would become `+1 314 488 0506`
+
+The phone number `4880506` would become `+1 314 488 0506`.
 
 This is useful because when you leave your area or country you will need
 this codes to complete the call. Also it will be easier to read.
